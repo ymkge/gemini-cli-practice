@@ -1,0 +1,24 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0;
+}
+
+h1 {
+    color: #333;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    width: 400px;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+canvas {
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
