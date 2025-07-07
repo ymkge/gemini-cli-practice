@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 const timerElement = document.getElementById('timer');
 const bgm = document.getElementById('bgm');
+bgm.src = 'game.mp3';
 
 // ゲームの設定
 const GRID_SIZE = 7;
