@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>どこでもいっしょ風 パズルゲーム</title>
+    <title>ツムツム風パズルゲーム</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>どこでもいっしょ風 パズル</h1>
+    <h1>ツムツム風パズル</h1>
+    <button id="startButton">ゲーム開始</button>
+    <button id="endButton" style="display: none;">ゲーム終了</button>
     <div class="game-info">
-        <div class="score-container">スコア: <span id="score">0</span></div>
-        <div class="timer-container">時間: <span id="timer">60</span></div>
+        <div>スコア: <span id="score">0</span></div>
+        <div>タイマー: <span id="timer">60</span></div>
     </div>
     <canvas id="game-canvas"></canvas>
-    <audio id="bgm" src="bgm.mp3" loop></audio>
+    <audio id="bgm" loop></audio>
     <script src="game.js"></script>
 </body>
 </html>

@@ -11,12 +11,14 @@ canvas.width = GRID_SIZE * CELL_SIZE;
 canvas.height = GRID_SIZE * CELL_SIZE;
 
 const CHARACTERS = [
-    { name: 'トロ', img: 'images/toro.jpg' },
-    { name: 'クロ', img: 'images/kuro.jpg' },
-    { name: 'ピエール', img: 'images/pierre.jpg' },
-    { name: 'リッキー', img: 'images/ricky.jpg' },
-    { name: 'ジュン', img: 'images/jun.jpg' },
-    { name: 'スズキ', img: 'images/suzuki.jpg' }
+    { name: '黒猫', img: 'images/black-cat.jpg' },
+    { name: 'いぬ', img: 'images/dog.jpg' },
+    { name: 'カエル', img: 'images/frog.jpg' },
+    { name: 'ライオン', img: 'images/lion.jpg' },
+    { name: 'うさぎ', img: 'images/rabbit.jpg' },
+    { name: 'チーター', img: 'images/ti-ta-.jpg' },
+    { name: 'ロボ', img: 'images/robo.jpg' },
+    { name: '白猫', img: 'images/white-cat.jpg' }
 ];
 
 let grid = [];
@@ -269,4 +271,26 @@ function drawChainLine() {
     ctx.stroke();
 }
 
-init();
+const startButton = document.getElementById('startButton');
+const endButton = document.getElementById('endButton');
+
+startButton.addEventListener('click', () => {
+    init();
+    startButton.style.display = 'none';
+    endButton.style.display = 'inline-block';
+});
+
+endButton.addEventListener('click', () => {
+    endGame();
+});
+
+function endGame() {
+    gameOver = true;
+    clearInterval(timerId);
+    bgm.pause();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    scoreElement.textContent = 0;
+    timerElement.textContent = 60;
+    startButton.style.display = 'inline-block';
+    endButton.style.display = 'none';
+}
