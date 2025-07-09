@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import google.generativeai as genai
 import json
@@ -34,7 +35,8 @@ if st.button("コンプライアンスをチェック"):
         try:
             with st.spinner("コンプライアンスの問題をチェックしています..."):
                 # Read the prompt from the file
-                with open("prompt.txt", "r") as f:
+                prompt_file_path = os.path.join(os.path.dirname(__file__), "prompt.txt")
+                with open(prompt_file_path, "r") as f:
                     prompt = f.read()
 
                 # Configure the Gemini API
