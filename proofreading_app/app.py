@@ -6,30 +6,7 @@ import pandas as pd
 # Set page config
 st.set_page_config(layout="wide", page_title="コンプライアンスチェックアプリ", page_icon="✅")
 
-# Custom CSS for a modern look
-st.markdown("""
-    <style>
-    body {
-        color: black;
-    }
-    .stApp {
-        background: #f0f2f6;
-        color: black;
-    }
-    .stButton>button {
-        background-color: #4CAF50;
-        color: white;
-    }
-    .stTextInput>div>div>input {
-        background-color: #ffffff;
-        color: black;
-    }
-    .stTextArea>div>div>textarea {
-        background-color: #ffffff;
-        color: black;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+
 
 # App title
 st.title("📝 コンプライアンス校正アプリ")
