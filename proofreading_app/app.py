@@ -22,7 +22,7 @@ with col1:
 with col2:
     st.subheader("設定")
     api_key = st.text_input("Gemini APIキーを入力してください:", type="password")
-    model_name = st.selectbox("使用するモデルを選択してください:", ("gemini-1.5-flash", "gemini-1.5-pro"))
+    model_name = st.selectbox("使用するモデルを選択してください:", ("gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.5-flash", "gemini-2.5-pro"))
 
 # --- Main Logic ---
 if st.button("コンプライアンスをチェック"):
