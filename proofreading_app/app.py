@@ -18,9 +18,11 @@ st.markdown("""
     }
     .stTextInput>div>div>input {
         background-color: #ffffff;
+        color: black;
     }
     .stTextArea>div>div>textarea {
         background-color: #ffffff;
+        color: black;
     }
     </style>
     """, unsafe_allow_html=True)
