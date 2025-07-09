@@ -4,7 +4,7 @@ import json
 import pandas as pd
 
 # Set page config
-st.set_page_config(layout="wide", page_title="Compliance Check App", page_icon="✅")
+st.set_page_config(layout="wide", page_title="コンプライアンスチェックアプリ", page_icon="✅")
 
 # Custom CSS for a modern look
 st.markdown("""
@@ -28,30 +28,30 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # App title
-st.title("📝 Compliance Proofreading App")
-st.markdown("This application checks for inappropriate expressions in your text using the Gemini API.")
+st.title("📝 コンプライアンス校正アプリ")
+st.markdown("このアプリケーションは、Gemini APIを使用して、テキスト内の不適切な表現をチェックします。")
 
 # --- UI Elements ---
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("Input Text")
-    input_text = st.text_area("Enter the text you want to check (up to 10000 characters):", height=300, max_chars=10000)
+    st.subheader("入力テキスト")
+    input_text = st.text_area("チェックしたいテキストを入力してください（最大10000文字）:", height=300, max_chars=10000)
 
 with col2:
-    st.subheader("Configuration")
-    api_key = st.text_input("Enter your Gemini API Key:", type="password")
-    model_name = st.selectbox("Select the model to use:", ("gemini-1.5-flash", "gemini-1.5-pro"))
+    st.subheader("設定")
+    api_key = st.text_input("Gemini APIキーを入力してください:", type="password")
+    model_name = st.selectbox("使用するモデルを選択してください:", ("gemini-1.5-flash", "gemini-1.5-pro"))
 
 # --- Main Logic ---
-if st.button("Check Compliance"):
+if st.button("コンプライアンスをチェック"):
     if not api_key:
-        st.error("Please enter your Gemini API Key.")
+        st.error("Gemini APIキーを入力してください。")
     elif not input_text:
-        st.error("Please enter some text to check.")
+        st.error("チェックするテキストを入力してください。")
     else:
         try:
-            with st.spinner("Checking for compliance issues..."):
+            with st.spinner("コンプライアンスの問題をチェックしています..."):
                 # Read the prompt from the file
                 with open("prompt.txt", "r") as f:
                     prompt = f.read()
@@ -73,24 +73,24 @@ if st.button("Check Compliance"):
                 try:
                     results = json.loads(cleaned_response)
                 except json.JSONDecodeError:
-                    st.error("Failed to parse the response from the model. The response may not be in the expected JSON format.")
-                    st.text("Model Response:")
+                    st.error("モデルからの応答の解析に失敗しました。応答が期待されるJSON形式でない可能性があります。")
+                    st.text("モデルの応答:")
                     st.code(response.text)
                     results = []
 
 
                 if results:
-                    st.subheader("Compliance Check Results")
+                    st.subheader("コンプライアンスチェック結果")
                     df = pd.DataFrame(results)
                     df.index = df.index + 1
                     df.rename(columns={
-                        "inappropriate_sentence": "Inappropriate Sentence",
-                        "reason": "Reason for Inappropriate",
-                        "correction": "Suggested Correction"
+                        "inappropriate_sentence": "不適切な文",
+                        "reason": "不適切な理由",
+                        "correction": "修正案"
                     }, inplace=True)
                     st.table(df)
                 else:
-                    st.success("No compliance issues found!")
+                    st.success("コンプライアンスの問題は見つかりませんでした！")
 
         except Exception as e:
-            st.error(f"An error occurred: {e}")
+            st.error(f"エラーが発生しました: {e}")
