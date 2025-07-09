@@ -9,8 +9,12 @@ st.set_page_config(layout="wide", page_title="コンプライアンスチェッ�
 # Custom CSS for a modern look
 st.markdown("""
     <style>
+    body {
+        color: black;
+    }
     .stApp {
         background: #f0f2f6;
+        color: black;
     }
     .stButton>button {
         background-color: #4CAF50;
