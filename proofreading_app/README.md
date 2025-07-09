@@ -1,4 +1,5 @@
 # コンプライアンス校正アプリ
+![スクリーンショット 2025-07-10 0 41 43](https://github.com/user-attachments/assets/17bcddc5-150a-4012-9b0b-86ecefc6a46c)
 
 ## 概要
 
