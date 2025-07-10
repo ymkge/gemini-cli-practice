@@ -23,7 +23,7 @@ with col1:
 with col2:
     st.subheader("設定")
     api_key = st.text_input("Gemini APIキーを入力してください:", type="password")
-    model_name = st.selectbox("使用するモデルを選択してください:", ("gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.5-flash", "gemini-2.5-pro"))
+    model_name = st.selectbox("使用するモデルを選択してください:", ("gemini-2.5-flash", "gemini-2.5-pro"))
 
 # --- Main Logic ---
 if st.button("コンプライアンスをチェック"):
@@ -71,7 +71,70 @@ if st.button("コンプライアンスをチェック"):
                         "reason": "不適切な理由",
                         "correction": "修正案"
                     }, inplace=True)
-                    st.table(df)
+
+                    # Manually create HTML table from DataFrame for better control
+                    def dataframe_to_html_with_style(df):
+                        import html as html_converter
+                        # Start CSS style
+                        html_output = """
+                        <style>
+                            .compliance-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                table-layout: fixed;
+                                border-radius: 8px; /* Add rounded corners to the table */
+                                overflow: hidden; /* Hide overflow for rounded corners */
+                                box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Add a subtle shadow */
+                            }
+                            .compliance-table th {
+                                background: linear-gradient(to right, #434343 0%, black 100%);
+                                color: white;
+                                font-weight: bold;
+                                padding: 16px 15px;
+                                text-align: left;
+                                border-bottom: none;
+                            }
+                            .compliance-table td {
+                                padding: 12px 15px;
+                                border-bottom: 1px solid #e0e0e0;
+                                word-wrap: break-word;
+                                vertical-align: top;
+                                background-color: #ffffff;
+                            }
+                            .compliance-table tbody tr:last-child td {
+                                border-bottom: none; /* Remove border for the last row */
+                            }
+                            .compliance-table th:nth-child(1) { width: 30%; }
+                            .compliance-table th:nth-child(2) { width: 40%; }
+                            .compliance-table th:nth-child(3) { width: 30%; }
+                        </style>
+                        """
+                        # Start table
+                        html_output += '<table class="compliance-table">'
+                        
+                        # Add header
+                        html_output += '<thead><tr>'
+                        for col in df.columns:
+                            html_output += f'<th>{col}</th>'
+                        html_output += '</tr></thead>'
+                        
+                        # Add body
+                        html_output += '<tbody>'
+                        for index, row in df.iterrows():
+                            html_output += '<tr>'
+                            for col in df.columns:
+                                # Escape content and replace newlines with <br> for proper HTML rendering
+                                cell_content = html_converter.escape(str(row[col])).replace("\n", "<br>")
+                                html_output += f'<td>{cell_content}</td>'
+                            html_output += '</tr>'
+                        html_output += '</tbody>'
+                        
+                        # Close table
+                        html_output += '</table>'
+                        return html_output
+
+                    table_html = dataframe_to_html_with_style(df)
+                    st.markdown(table_html, unsafe_allow_html=True)
                 else:
                     st.success("コンプライアンスの問題は見つかりませんでした！")
 
