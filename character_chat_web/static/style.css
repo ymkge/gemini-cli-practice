@@ -1,0 +1,106 @@
+
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#chat-container {
+    display: flex;
+    width: 800px;
+    height: 600px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#character-area {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e0e0e0;
+    overflow: hidden; /* Prevents image from overflowing during animation */
+}
+
+#character-image {
+    max-width: 80%;
+    max-height: 80%;
+    /* Add smooth transitions for all transformations */
+    transition: transform 0.5s ease-in-out;
+    /* Define the breathing animation */
+    animation: breathe 4s ease-in-out infinite;
+}
+
+/* Keyframes for the breathing animation */
+@keyframes breathe {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05) translateY(-10px);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Add a class for a tilt action */
+.tilting {
+    transform: rotate(-5deg) scale(1.05);
+}
+
+#chat-box {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-log {
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ccc;
+}
+
+#input-area {
+    display: flex;
+    padding: 10px;
+}
+
+#user-input {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+#send-button {
+    margin-left: 10px;
+    padding: 8px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#lang-selector {
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.user-message {
+    text-align: right;
+    margin: 5px 0;
+    color: #007bff;
+}
+
+.character-message {
+    text-align: left;
+    margin: 5px 0;
+    color: #333;
+}
