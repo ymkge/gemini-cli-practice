@@ -1,0 +1,30 @@
+.App {
+  padding-top: 40px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.completed span {
+  text-decoration: line-through;
+}
+
+.list-group-item {
+  cursor: grab;
+}
+
+.priority-High {
+  border-left: 5px solid #dc3545; /* Red */
+}
+
+.priority-Medium {
+  border-left: 5px solid #ffc107; /* Yellow */
+}
+
+.priority-Low {
+  border-left: 5px solid #198754; /* Green */
+}
+
+.due-date {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
