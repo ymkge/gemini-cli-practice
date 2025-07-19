@@ -1,28 +1,28 @@
-# Invaders Game
+# インベーダーゲーム
 
-A simple retro-style space invaders game built with HTML, CSS, and JavaScript.
+HTML、CSS、JavaScriptで作成された、シンプルなレトロ風のスペースインベーダーゲームです。
 
-## How to Play
+## 遊び方
 
-1.  Open the `index.html` file in your web browser.
-2.  Click the **Start** button to begin the game.
+1.  `index.html` ファイルをウェブブラウザで開きます。
+2.  **Start** ボタンをクリックしてゲームを開始します。
 
-### Controls
+### 操作方法
 
-*   **Arrow Keys (Left/Right):** Move the player ship.
-*   **Spacebar:** Fire bullets.
-*   **Start Button:** Starts the game.
-*   **Stop Button:** Pauses the game.
-*   **Reset Button:** Resets the game to its initial state.
+*   **矢印キー (左/右):** プレイヤーの宇宙船を移動します。
+*   **スペースキー:** 弾を発射します。
+*   **Startボタン:** ゲームを開始します。
+*   **Stopボタン:** ゲームを一時停止します。
+*   **Resetボタン:** ゲームを初期状態にリセットします。
 
-## Development
+## 開発
 
-This game is built with plain JavaScript, using object-oriented principles to structure the code. The main game logic is encapsulated within a `Game` class, which manages the player, invaders, bullets, and the game loop.
+このゲームは、オブジェクト指向の原則を用いてコードを構造化した、プレーンなJavaScriptで構築されています。メインのゲームロジックは`Game`クラス内にカプセル化されており、プレイヤー、インベーダー、弾、そしてゲームループを管理しています。
 
-To run the game locally, you can use a simple HTTP server. If you have Python installed, you can run the following command in the project directory:
+ローカルでゲームを実行するには、シンプルなHTTPサーバーを使用できます。Pythonがインストールされている場合は、プロジェクトディレクトリで次のコマンドを実行します:
 
 ```bash
 python -m http.server
 ```
 
-Then, open `http://localhost:8000` in your browser.
+その後、ブラウザで `http://localhost:8000` を開きます。
