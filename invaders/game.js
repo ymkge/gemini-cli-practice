@@ -129,9 +129,9 @@ class Game {
 
     loop() {
         this.update();
-        this.draw();
 
         if (this.gameRunning) {
+            this.draw();
             this.animationId = requestAnimationFrame(() => this.loop());
         }
     }
@@ -170,20 +170,23 @@ class Game {
 
     handleCollisions() {
         // Bullet-Invader collision
-        this.bullets.forEach((bullet, bulletIndex) => {
-            this.invaders.forEach(invader => {
+        for (let i = this.bullets.length - 1; i >= 0; i--) {
+            const bullet = this.bullets[i];
+            for (let j = this.invaders.length - 1; j >= 0; j--) {
+                const invader = this.invaders[j];
                 if (invader.status === 1 &&
                     bullet.x > invader.x &&
                     bullet.x < invader.x + invader.width &&
                     bullet.y > invader.y &&
                     bullet.y < invader.y + invader.height) {
                     invader.status = 0;
-                    this.bullets.splice(bulletIndex, 1);
+                    this.bullets.splice(i, 1);
                     this.score += 10;
                     this.updateScore();
+                    break; // Exit inner loop once bullet hits an invader
                 }
-            });
-        });
+            }
+        }
 
         // Player-Invader collision
         this.invaders.forEach(invader => {
