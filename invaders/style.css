@@ -1,0 +1,30 @@
+body {
+    background-color: #000;
+    color: #0f0;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+}
+
+canvas {
+    background-color: #000;
+    border: 2px solid #0f0;
+}
+
+#score {
+    margin-top: 10px;
+    font-size: 24px;
+}
+
+button {
+    background-color: #0f0;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #fff;
+}
