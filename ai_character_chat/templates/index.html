@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Character Chat</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="chat-container">
+        <div id="character-area">
+            <!-- ここにキャラクターが表示される -->
+            <div id="character" class="idle"></div>
+        </div>
+        <div id="chat-window">
+            <div id="messages"></div>
+            <form id="chat-form">
+                <input type="text" id="message-input" autocomplete="off" placeholder="メッセージを入力...">
+                <button type="submit">送信</button>
+                <button type="button" id="reset-chat-button" style="background-color: #f39c12;">リセット</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>
