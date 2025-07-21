@@ -10,8 +10,8 @@ from ai_service import ai_service
 app = FastAPI()
 
 # --- 静的ファイルとテンプレートの設定 ---
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="ai_character_chat/static"), name="static")
+templates = Jinja2Templates(directory="ai_character_chat/templates")
 
 # --- APIエンドポイントの定義 ---
 @app.get("/", response_class=HTMLResponse)
