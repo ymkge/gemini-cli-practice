@@ -28,7 +28,7 @@ body {
     width: 250px; /* Adjust width as needed */
     height: 400px; /* Adjust height as needed */
     background-image: url('character.png'); /* Character image */
-    background-size: contain;
+    background-size: cover; /* containからcoverに変更 */
     background-repeat: no-repeat;
     background-position: center;
     transition: transform 0.5s ease-in-out;
