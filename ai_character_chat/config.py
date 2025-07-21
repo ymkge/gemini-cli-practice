@@ -17,7 +17,7 @@ class Config:
     def _load_character_settings(self):
         """キャラクター設定をJSONファイルから読み込む"""
         try:
-            with open("ai_character_chat/character_settings.json", "r", encoding="utf-8") as f:
+            with open(os.path.join(os.path.dirname(__file__), "character_settings.json"), "r", encoding="utf-8") as f:
                 settings = json.load(f)
                 return settings.get("system_prompt", "あなたは親切なアシスタントです。")
         except FileNotFoundError:
