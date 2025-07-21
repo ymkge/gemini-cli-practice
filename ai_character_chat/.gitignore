@@ -8,3 +8,7 @@ __pycache__/
 # IDE/エディタ設定ファイル
 .vscode/
 .idea/
+
+# 独自キャラクター設定ファイルは除外
+character_settings_mirai.json
+character_mirai.png
