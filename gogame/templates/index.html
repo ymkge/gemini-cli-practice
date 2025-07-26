@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>囲碁ゲーム</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="board-container">
+            <div id="board"></div>
+        </div>
+        <div id="info-panel">
+            <h1>囲碁ゲーム</h1>
+            <div id="game-info">
+                <p>手番: <span id="turn">黒</span></p>
+                <p>黒のアゲハマ: <span id="black-captures">0</span></p>
+                <p>白のアゲハマ: <span id="white-captures">0</span></p>
+            </div>
+            <div id="controls">
+                <button id="new-game-btn">新しいゲーム (9x9)</button>
+                <button id="new-game-13-btn">新しいゲーム (13x13)</button>
+                <button id="new-game-19-btn">新しいゲーム (19x19)</button>
+                <button id="pass-btn">パス</button>
+                <button id="undo-btn">やり直し</button>
+                <button id="resign-btn">投了</button>
+            </div>
+            <div id="message-box"></div>
+        </div>
+    </div>
+
+    <div id="score-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>終局</h2>
+            <div id="score-details"></div>
+            <button id="close-score-modal">閉じる</button>
+        </div>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>
