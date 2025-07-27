@@ -1,4 +1,5 @@
 # Web版 囲碁ゲーム
+<img width="724" height="577" alt="スクリーンショット 2025-07-27 23 44 01" src="https://github.com/user-attachments/assets/2d638e22-75c1-41d2-b063-7f56669da8ee" />
 
 ブラウザで動作する、リッチなUIの囲碁ゲームです。
 バックエンドにPython (Flask)、フロントエンドにHTML/CSS/JavaScriptを使用しています。
