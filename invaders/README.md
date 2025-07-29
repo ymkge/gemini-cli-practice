@@ -1,4 +1,5 @@
 # インベーダーゲーム
+<img width="851" height="784" alt="スクリーンショット 2025-07-29 15 43 57" src="https://github.com/user-attachments/assets/9910b087-688c-4dbc-9ae9-52c5fece8061" />
 
 HTML、CSS、JavaScriptで作成された、モダンなデザインとサウンドを備えたスペースインベーダーゲームです。
 
