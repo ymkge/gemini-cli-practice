@@ -1,17 +1,22 @@
 // config.js
-export const canvas = document.getElementById('gameCanvas');
-export const ctx = canvas.getContext('2d');
 
-export const pauseBtn = document.getElementById('pauseBtn');
-export const restartBtn = document.getElementById('restartBtn');
-export const scoreValue = document.getElementById('scoreValue');
+const canvas = document.getElementById('gameCanvas');
 
-export const GOAL_SCORE = 500;
-export const PLAYER_WIDTH = 50;
-export const PLAYER_HEIGHT = 30;
-export const PLAYER_SPEED = 8;
-export const BULLET_SPEED = 7;
-export const BULLET_RADIUS = 5;
-export const ENEMY_WIDTH = 40;
-export const ENEMY_HEIGHT = 40;
-export const ENEMY_SPAWN_INTERVAL = 1000;
+export const config = {
+    ctx: canvas.getContext('2d'),
+    pauseBtn: document.getElementById('pauseBtn'),
+    restartBtn: document.getElementById('restartBtn'),
+    startButton: document.getElementById('startButton'),
+    scoreValue: document.getElementById('scoreValue'),
+
+    GOAL_SCORE: 500,
+    PLAYER_WIDTH: 50,
+    PLAYER_HEIGHT: 30,
+    PLAYER_SPEED: 8,
+    BULLET_SPEED: 7,
+    BULLET_RADIUS: 5,
+    ENEMY_WIDTH: 40,
+    ENEMY_HEIGHT: 40,
+    ENEMY_SPAWN_INTERVAL: 1000,
+    playerBulletDamage: 1,
+};

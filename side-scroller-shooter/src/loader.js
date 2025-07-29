@@ -1,29 +1,34 @@
 // loader.js
 import { enemyTypes } from './enemy.js';
 
-export const enemyImages = {};
+export const loadedImages = {};
+
+const imagesToLoad = [
+    { id: 'player', path: 'images/player.png' },
+    ...enemyTypes.map(type => ({ id: type.id, path: type.imagePath }))
+];
 
 export function loadImages(callback) {
     let loadedCount = 0;
-    const totalImages = enemyTypes.length;
+    const totalImages = imagesToLoad.length;
 
     if (totalImages === 0) {
         callback();
         return;
     }
 
-    enemyTypes.forEach(type => {
+    imagesToLoad.forEach(imageInfo => {
         const img = new Image();
-        img.src = type.src;
+        img.src = imageInfo.path;
         img.onload = () => {
-            enemyImages[type.id] = img;
+            loadedImages[imageInfo.id] = img;
             loadedCount++;
             if (loadedCount === totalImages) {
                 callback();
             }
         };
         img.onerror = () => {
-            console.error(`画像の読み込みに失敗: ${type.src}`);
+            console.error(`画像の読み込みに失敗: ${imageInfo.path}`);
             loadedCount++;
             if (loadedCount === totalImages) {
                 callback();

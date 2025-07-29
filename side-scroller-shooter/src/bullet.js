@@ -1,21 +1,22 @@
 // bullet.js
-import { ctx } from './config.js';
+import { config } from './config.js';
 
 export class Bullet {
-    constructor(x, y, radius, color, speed) {
+    constructor(x, y, width, height, color, speed) {
         this.x = x;
         this.y = y;
-        this.radius = radius;
+        this.width = width;
+        this.height = height;
         this.color = color;
         this.speed = speed;
     }
 
     draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath();
+        config.ctx.fillStyle = this.color;
+        config.ctx.shadowColor = this.color;
+        config.ctx.shadowBlur = 10;
+        config.ctx.fillRect(this.x, this.y, this.width, this.height);
+        config.ctx.shadowBlur = 0; // Reset shadow for other elements
     }
 
     update() {

@@ -5,27 +5,83 @@ body {
     justify-content: center;
     height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
-    font-family: sans-serif;
+    background: linear-gradient(to bottom, #0a0a2a, #000000);
+    font-family: 'Orbitron', sans-serif; /* SF-like font */
+    color: #00ff00; /* Neon green */
+    overflow: hidden; /* Hide scrollbars for parallax */
+}
+
+h1 {
+    color: #00ffff; /* Cyan */
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    margin-bottom: 20px;
 }
 
 canvas {
-    border: 2px solid #333;
-    background-color: #fff;
+    border: 3px solid #00ff00;
+    box-shadow: 0 0 20px #00ff00, inset 0 0 10px #00ff00;
+    background-color: #000000; /* Canvas background for stars */
 }
 
 .controls {
-    margin-top: 10px;
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
+    background-color: #005500; /* Dark green */
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    padding: 12px 25px;
+    font-size: 18px;
     cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px #00ff00;
+    font-family: 'Orbitron', sans-serif;
+}
+
+button:hover {
+    background-color: #00ff00;
+    color: #000000;
+    box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00;
+}
+
+button:active {
+    transform: translateY(2px);
 }
 
 .score {
-    margin-top: 10px;
-    font-size: 20px;
+    margin-top: 20px;
+    font-size: 28px;
     font-weight: bold;
+    text-shadow: 0 0 8px #00ff00;
+}
+
+/* UI Screens */
+#pauseScreen, #gameOverScreen, #gameClearScreen {
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 10px;
+    border: 2px solid;
+    border-radius: 10px;
+    box-shadow: 0 0 20px;
+}
+
+#pauseScreen {
+    color: #00ffff;
+    border-color: #00ffff;
+    box-shadow: 0 0 20px #00ffff;
+}
+
+#gameOverScreen {
+    color: #ff0000;
+    border-color: #ff0000;
+    box-shadow: 0 0 20px #ff0000;
+}
+
+#gameClearScreen {
+    color: #00ff00;
+    border-color: #00ff00;
+    box-shadow: 0 0 20px #00ff00;
 }
