@@ -7,11 +7,17 @@ class Player {
         this.x = this.canvas.width / 2 - this.width / 2;
         this.y = this.canvas.height - 60;
         this.dx = 0;
+        this.image = new Image();
+        this.image.src = 'images/player.png';
     }
 
     draw(ctx) {
-        ctx.fillStyle = '#0f0';
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        if (this.image.complete) {
+            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        } else {
+            ctx.fillStyle = '#0f0';
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
     }
 
     move() {
@@ -33,14 +39,17 @@ class Bullet {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.width = 5;
-        this.height = 10;
-        this.speed = 7;
+        this.width = 4;
+        this.height = 20;
+        this.speed = 10;
     }
 
     draw(ctx) {
-        ctx.fillStyle = '#0f0';
+        ctx.fillStyle = '#00ffff';
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 10;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.shadowBlur = 0; // Reset shadow for other elements
     }
 
     move() {
@@ -55,12 +64,19 @@ class Invader {
         this.width = 40;
         this.height = 30;
         this.status = 1; // 1: alive, 0: destroyed
+        this.image = new Image();
+        const enemyImageIndex = Math.floor(Math.random() * 5) + 1;
+        this.image.src = `images/enemy${enemyImageIndex}.png`;
     }
 
     draw(ctx) {
         if (this.status === 1) {
-            ctx.fillStyle = '#0f0';
-            ctx.fillRect(this.x, this.y, this.width, this.height);
+            if (this.image.complete) {
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            } else {
+                ctx.fillStyle = '#0f0';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
         }
     }
 }
@@ -70,6 +86,13 @@ class Game {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('2d');
         this.scoreElement = scoreElement;
+        this.bgm = document.getElementById('bgm');
+        this.shootSfx = document.getElementById('shootSfx');
+        this.explosionSfx = document.getElementById('explosionSfx');
+        this.gameOverSfx = document.getElementById('gameOverSfx');
+        this.stars = [];
+        this.createStars();
+        this.particles = [];
         this.init();
     }
 
@@ -85,6 +108,61 @@ class Game {
         this.invaders = [];
         this.createInvaders();
         this.updateScore();
+    }
+
+    createStars() {
+        for (let i = 0; i < 100; i++) {
+            this.stars.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                radius: Math.random() * 1.5,
+                speed: Math.random() * 0.5 + 0.2
+            });
+        }
+    }
+
+    drawStars() {
+        this.ctx.fillStyle = '#fff';
+        this.stars.forEach(star => {
+            star.y += star.speed;
+            if (star.y > this.canvas.height) {
+                star.y = 0;
+                star.x = Math.random() * this.canvas.width;
+            }
+            this.ctx.beginPath();
+            this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            this.ctx.fill();
+        });
+    }
+
+    createExplosion(x, y) {
+        for (let i = 0; i < 30; i++) {
+            this.particles.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 5,
+                vy: (Math.random() - 0.5) * 5,
+                size: Math.random() * 3 + 1,
+                color: `rgba(255, ${Math.random() * 255}, 0, ${Math.random()})`,
+                life: 30
+            });
+        }
+    }
+
+    drawParticles() {
+        this.particles.forEach((p, index) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life--;
+            if (p.life <= 0) {
+                this.particles.splice(index, 1);
+            } else {
+                this.ctx.fillStyle = p.color;
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+        });
     }
 
     createInvaders() {
@@ -109,6 +187,7 @@ class Game {
     start() {
         if (!this.gameRunning) {
             this.gameRunning = true;
+            this.bgm.play().catch(e => console.error("BGM playback failed:", e));
             this.loop();
         }
     }
@@ -122,6 +201,8 @@ class Game {
 
     reset() {
         this.stop();
+        this.bgm.pause();
+        this.bgm.currentTime = 0;
         this.init();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.draw();
@@ -179,10 +260,13 @@ class Game {
                     bullet.x < invader.x + invader.width &&
                     bullet.y > invader.y &&
                     bullet.y < invader.y + invader.height) {
+                    this.createExplosion(invader.x + invader.width / 2, invader.y + invader.height / 2);
                     invader.status = 0;
                     this.bullets.splice(i, 1);
                     this.score += 10;
                     this.updateScore();
+                    this.explosionSfx.currentTime = 0;
+                    this.explosionSfx.play();
                     break; // Exit inner loop once bullet hits an invader
                 }
             }
@@ -209,9 +293,11 @@ class Game {
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawStars();
         this.player.draw(this.ctx);
         this.bullets.forEach(bullet => bullet.draw(this.ctx));
         this.invaders.forEach(invader => invader.draw(this.ctx));
+        this.drawParticles();
     }
 
     updateScore() {
@@ -220,6 +306,8 @@ class Game {
 
     gameOver() {
         this.stop();
+        this.bgm.pause();
+        this.gameOverSfx.play();
         this.showMessage('GAME OVER', '#f00');
     }
 
@@ -243,6 +331,8 @@ class Game {
         } else if (e.key === ' ' || e.key === 'Spacebar') {
             if (this.gameRunning) {
                 this.bullets.push(this.player.shoot());
+                this.shootSfx.currentTime = 0;
+                this.shootSfx.play();
             }
         }
     }
