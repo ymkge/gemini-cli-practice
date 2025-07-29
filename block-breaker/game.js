@@ -1,6 +1,12 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+const bgm = document.getElementById('bgm');
+const bounceSfx = document.getElementById('bounceSfx');
+const breakSfx = document.getElementById('breakSfx');
+const gameOverSfx = document.getElementById('gameOverSfx');
+const winSfx = document.getElementById('winSfx');
+
 let x = canvas.width / 2;
 let y = canvas.height - 30;
 let dx = 2;
@@ -15,6 +21,7 @@ let score = 0;
 let paused = false;
 let gameOver = false;
 let gameWon = false;
+let particles = [];
 
 const brickRowCount = 3;
 const brickColumnCount = 5;
@@ -24,12 +31,18 @@ const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 
+const brickColors = [
+    { color1: "#ff6b6b", color2: "#f06595" },
+    { color1: "#fcc419", color2: "#ff922b" },
+    { color1: "#51cf66", color2: "#94d82d" },
+];
+
 let bricks = [];
 for(let c=0; c<brickColumnCount; c++) {
     bricks[c] = [];
     for(let r=0; r<brickRowCount; r++) {
-        const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-        bricks[c][r] = { x: 0, y: 0, status: 1, color: randomColor };
+        const color = brickColors[r % brickColors.length];
+        bricks[c][r] = { x: 0, y: 0, status: 1, color1: color.color1, color2: color.color2 };
     }
 }
 
@@ -39,7 +52,20 @@ document.getElementById('pauseBtn').addEventListener('click', togglePause);
 document.getElementById('restartBtn').addEventListener('click', () => { document.location.reload() });
 
 
+function playBgm() {
+    bgm.play().catch(error => {
+        console.log("BGM play was prevented: " + error);
+    });
+}
+
+let bgmStarted = false;
+
 function keyDownHandler(e) {
+    if (!bgmStarted && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        playBgm();
+        bgmStarted = true;
+    }
+
     if(e.key == "Right" || e.key == "ArrowRight") {
         rightPressed = true;
     }
@@ -64,6 +90,38 @@ function togglePause() {
     }
 }
 
+function createParticles(brick) {
+    for (let i = 0; i < 10; i++) {
+        particles.push({
+            x: brick.x + brickWidth / 2,
+            y: brick.y + brickHeight / 2,
+            dx: (Math.random() - 0.5) * 4,
+            dy: (Math.random() - 0.5) * 4,
+            size: Math.random() * 3 + 1,
+            color: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, ${Math.random()})`,
+            life: 30
+        });
+    }
+}
+
+function drawParticles() {
+    particles.forEach((p, index) => {
+        p.x += p.dx;
+        p.y += p.dy;
+        p.life--;
+
+        if (p.life <= 0) {
+            particles.splice(index, 1);
+        } else {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+    });
+}
+
 function collisionDetection() {
     for(let c=0; c<brickColumnCount; c++) {
         for(let r=0; r<brickRowCount; r++) {
@@ -73,9 +131,13 @@ function collisionDetection() {
                     dy = -dy;
                     b.status = 0;
                     score++;
+                    createParticles(b);
+                    breakSfx.play();
                     document.getElementById('score').innerHTML = "Score: " + score;
                     if(score == brickRowCount*brickColumnCount) {
                         gameWon = true;
+                        winSfx.play();
+                        bgm.pause();
                     }
                 }
             }
@@ -85,18 +147,42 @@ function collisionDetection() {
 
 function drawBall() {
     ctx.beginPath();
+    const gradient = ctx.createRadialGradient(x, y, ballRadius / 2, x, y, ballRadius);
+    gradient.addColorStop(0, "#fff");
+    gradient.addColorStop(1, "#ff6b6b");
+    ctx.fillStyle = gradient;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 5;
+    ctx.shadowOffsetY = 5;
     ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-    ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
+    // Reset shadow properties
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
 }
 
 function drawPaddle() {
     ctx.beginPath();
+    const gradient = ctx.createLinearGradient(paddleX, canvas.height - paddleHeight, paddleX, canvas.height);
+    gradient.addColorStop(0, "#ff6b6b");
+    gradient.addColorStop(1, "#ff8787");
+    ctx.fillStyle = gradient;
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 5;
     ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-    ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
+    // Reset shadow properties
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
 }
 
 function drawBricks() {
@@ -109,25 +195,45 @@ function drawBricks() {
                 bricks[c][r].y = brickY;
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                ctx.fillStyle = bricks[c][r].color;
+                const gradient = ctx.createLinearGradient(brickX, brickY, brickX + brickWidth, brickY + brickHeight);
+                gradient.addColorStop(0, bricks[c][r].color1);
+                gradient.addColorStop(1, bricks[c][r].color2);
+                ctx.fillStyle = gradient;
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowBlur = 5;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
                 ctx.fill();
                 ctx.closePath();
+                // Reset shadow properties
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
             }
         }
     }
 }
 
 function drawGameOver() {
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "#0095DD";
+    ctx.font = "48px 'Arial', sans-serif";
+    ctx.fillStyle = "#fff";
     ctx.textAlign = "center";
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 5;
+    ctx.shadowOffsetY = 5;
     ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2);
 }
 
 function drawYouWin() {
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "#0095DD";
+    ctx.font = "48px 'Arial', sans-serif";
+    ctx.fillStyle = "#fff";
     ctx.textAlign = "center";
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 5;
+    ctx.shadowOffsetY = 5;
     ctx.fillText("YOU WIN!", canvas.width/2, canvas.height/2);
 }
 
@@ -150,20 +256,26 @@ function draw() {
     drawBricks();
     drawBall();
     drawPaddle();
+    drawParticles();
     collisionDetection();
 
     if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
         dx = -dx;
+        bounceSfx.play();
     }
     if(y + dy < ballRadius) {
         dy = -dy;
+        bounceSfx.play();
     }
     else if(y + dy > canvas.height-ballRadius) {
         if(x > paddleX && x < paddleX + paddleWidth) {
             dy = -dy;
+            bounceSfx.play();
         }
         else {
             gameOver = true;
+            gameOverSfx.play();
+            bgm.pause();
         }
     }
 
