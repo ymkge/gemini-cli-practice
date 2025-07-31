@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe</title>
+    <title>Tic-Tac-Toe Deluxe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Tic-Tac-Toe</h1>
+    <div class="status" id="status">Player X's turn</div>
     <div id="board" class="board"></div>
-    <button id="resetButton">Reset Game</button>
+    <button id="resetButton">Play Again</button>
     <div id="score">
-        <p>Play Count: <span id="playCount">0</span></p>
+        <p>Games Played: <span id="playCount">0</span></p>
     </div>
+
+    <div class="message-overlay" id="messageOverlay">
+        <div class="message-box">
+            <p id="messageText"></p>
+            <button id="newGameButton">New Game</button>
+        </div>
+    </div>
+
     <script src="game.js"></script>
 </body>
 </html>
