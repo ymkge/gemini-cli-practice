@@ -1,5 +1,7 @@
 # 三目並べ (Tic-Tac-Toe)
 
+<img width="451" height="589" alt="スクリーンショット 2025-07-31 22 53 45" src="https://github.com/user-attachments/assets/ac0d6ba7-b0bf-4905-9ea2-b8ef2bbeabc5" />
+
 モダンなUIで遊べる三目並べゲームです。
 
 ## 主な機能
