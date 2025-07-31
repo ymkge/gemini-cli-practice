@@ -1,5 +1,7 @@
 # テトリス (Modern Tetris)
 
+<img width="763" height="703" alt="スクリーンショット 2025-07-31 23 12 05" src="https://github.com/user-attachments/assets/85d6d0fd-cff9-4e4a-9dca-d6156d951cab" />
+
 Pygameで作成された、モダンなUIのテトリスゲームです。
 
 ## 主な機能
