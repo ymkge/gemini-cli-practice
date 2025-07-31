@@ -38,6 +38,7 @@ let timerId = null;
 let isDragging = false;
 let currentChain = [];
 let characterImages = {};
+let particles = [];
 
 // --- 初期化処理 ---
 async function init() {
@@ -52,6 +53,7 @@ function resetGame() {
     timeLeft = 60;
     gameOver = false;
     paused = false;
+    particles = []; // パーティクルをリセット
     scoreElement.textContent = score;
     timerElement.textContent = timeLeft;
     gameOverOverlay.style.display = 'none';
@@ -163,12 +165,29 @@ function drawChainLine() {
     ctx.stroke();
 }
 
+function drawParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.size *= 0.97;
+        if (p.size < 0.5) {
+            particles.splice(i, 1);
+        }
+    }
+}
+
 // --- ゲームロジック ---
 function gameLoop() {
     if (gameOver) return;
     if (!paused) {
         drawGrid();
         drawChainLine();
+        drawParticles();
     }
     requestAnimationFrame(gameLoop);
 }
