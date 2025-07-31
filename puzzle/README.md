@@ -1,5 +1,7 @@
 # もふもふフレンズ パズル
 
+<img width="555" height="769" alt="スクリーンショット 2025-07-31 23 42 50" src="https://github.com/user-attachments/assets/b61ca09d-8c31-4db5-8fba-5f7b4fb7e741" />
+
 かわいいキャラクターたちをつなげて消す、癒し系パズルゲームです。
 
 ## 主な機能
