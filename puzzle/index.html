@@ -3,19 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ツムツム風パズルゲーム</title>
+    <title>もふもふフレンズ パズル</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>ツムツム風パズル</h1>
-    <button id="startButton">ゲーム開始</button>
-    <button id="endButton" style="display: none;">ゲーム終了</button>
-    <div class="game-info">
-        <div>スコア: <span id="score">0</span></div>
-        <div>タイマー: <span id="timer">60</span></div>
+    <div class="container">
+        <header>
+            <h1>もふもふフレンズ</h1>
+            <div class="game-info">
+                <div class="info-box score-box">
+                    <span class="label">SCORE</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="info-box time-box">
+                    <span class="label">TIME</span>
+                    <span id="timer">60</span>
+                </div>
+            </div>
+        </header>
+        
+        <div class="game-area">
+            <canvas id="game-canvas"></canvas>
+            <div class="overlay" id="start-overlay">
+                <button id="startButton" class="btn">ゲーム開始</button>
+            </div>
+            <div class="overlay" id="pause-overlay" style="display: none;">
+                <div class="message-box">PAUSE</div>
+            </div>
+            <div class="overlay" id="game-over-overlay" style="display: none;">
+                <div class="message-box">
+                    <p>GAME OVER</p>
+                    <button id="restartButton" class="btn">もう一度遊ぶ</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <button id="pauseButton" class="control-btn">II</button>
+            <p>Pキーでもポーズできます</p>
+        </footer>
     </div>
-    <canvas id="game-canvas"></canvas>
-    <audio id="bgm" loop></audio>
+
+    <audio id="bgm" src="game.mp3" loop></audio>
+    <audio id="pop-sound" src="pop.mp3"></audio>
+
     <script src="game.js"></script>
 </body>
 </html>
