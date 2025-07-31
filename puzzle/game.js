@@ -224,10 +224,10 @@ function addTsumToChain(x, y) {
 }
 
 function processChain() {
-    if (currentChain.length < 3) return;
+    if (currentChain.length < 2) return;
     
     const chainLength = currentChain.length;
-    score += chainLength * 10 + (chainLength - 3) * 5; // 長いほどボーナス
+    score += chainLength * 10 + (chainLength - 2) * 5; // 長いほどボーナス
     scoreElement.textContent = score;
     
     popSound.currentTime = 0;
@@ -235,9 +235,25 @@ function processChain() {
 
     currentChain.forEach(tsum => {
         grid[tsum.y][tsum.x] = null;
+        createParticles(tsum.x, tsum.y);
     });
 
     refillGrid();
+}
+
+function createParticles(x, y) {
+    const centerX = x * CELL_SIZE + CELL_SIZE / 2;
+    const centerY = y * CELL_SIZE + CELL_SIZE / 2;
+    for (let i = 0; i < 20; i++) {
+        particles.push({
+            x: centerX,
+            y: centerY,
+            vx: (Math.random() - 0.5) * 4,
+            vy: (Math.random() - 0.5) * 4,
+            size: Math.random() * 5 + 2,
+            color: `hsla(${Math.random() * 360}, 100%, 75%, 0.8)`
+        });
+    }
 }
 
 // --- イベントリスナー ---
