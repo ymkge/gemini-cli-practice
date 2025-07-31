@@ -236,7 +236,9 @@ def draw_window(surface, grid, score=0, level=1, lines=0):
     surface.fill(BLACK)
     
     # --- Title ---
-    draw_text(surface, 'TETRIS', 60, WHITE, TOP_LEFT_X + PLAY_WIDTH / 2 - 100, 30)
+    font = pygame.font.Font(pygame.font.match_font('droidsansmono'), 60)
+    label = font.render('TETRIS', 1, WHITE)
+    surface.blit(label, (TOP_LEFT_X + PLAY_WIDTH / 2 - (label.get_width() / 2), 30))
 
     # --- Game Info ---
     sx = TOP_LEFT_X - 220
