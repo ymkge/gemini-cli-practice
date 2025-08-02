@@ -102,6 +102,7 @@ class Game {
         this.animationId = null;
         this.invadersDirection = 1;
         this.invadersSpeed = 0.5;
+        this.frameCount = 0;
 
         this.player = new Player(this.canvas);
         this.bullets = [];
@@ -228,6 +229,13 @@ class Game {
         this.moveInvaders();
         this.handleCollisions();
         this.checkGameState();
+
+        this.frameCount++;
+        if (this.frameCount % 300 === 0) { // 約5秒ごと (60fpsの場合)
+            if (this.invadersSpeed < 2.5) { // 速度の上限
+                this.invadersSpeed *= 1.1;
+            }
+        }
     }
 
     moveInvaders() {
