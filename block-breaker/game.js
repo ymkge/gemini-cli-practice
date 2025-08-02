@@ -22,6 +22,7 @@ let paused = false;
 let gameOver = false;
 let gameWon = false;
 let particles = [];
+let frameCount = 0;
 
 const brickRowCount = 3;
 const brickColumnCount = 5;
@@ -288,6 +289,15 @@ function draw() {
 
     x += dx;
     y += dy;
+
+    frameCount++;
+    if (frameCount % 180 === 0) { // 約3秒ごと (60fpsの場合)
+        if (Math.abs(dx) < 5) { // 速度の上限
+            dx *= 1.1;
+            dy *= 1.1;
+        }
+    }
+
     requestAnimationFrame(draw);
 }
 
