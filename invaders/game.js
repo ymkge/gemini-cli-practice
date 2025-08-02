@@ -101,7 +101,7 @@ class Game {
         this.gameRunning = false;
         this.animationId = null;
         this.invadersDirection = 1;
-        this.invadersSpeed = 0.5;
+        this.invadersSpeed = 0.8;
         this.frameCount = 0;
 
         this.player = new Player(this.canvas);
@@ -231,8 +231,8 @@ class Game {
         this.checkGameState();
 
         this.frameCount++;
-        if (this.frameCount % 300 === 0) { // 約5秒ごと (60fpsの場合)
-            if (this.invadersSpeed < 2.5) { // 速度の上限
+        if (this.frameCount % 180 === 0) { // 約3秒ごと (60fpsの場合)
+            if (this.invadersSpeed < 4.0) { // 速度の上限
                 this.invadersSpeed *= 1.1;
             }
         }
