@@ -57,6 +57,25 @@ class Bullet {
     }
 }
 
+class EnemyBullet {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 4;
+        this.height = 10;
+        this.speed = 5;
+    }
+
+    draw(ctx) {
+        ctx.fillStyle = '#f00';
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+
+    move() {
+        this.y += this.speed;
+    }
+}
+
 class Invader {
     constructor(x, y) {
         this.x = x;
@@ -106,6 +125,7 @@ class Game {
 
         this.player = new Player(this.canvas);
         this.bullets = [];
+        this.enemyBullets = [];
         this.invaders = [];
         this.createInvaders();
         this.updateScore();
@@ -226,7 +246,14 @@ class Game {
                 this.bullets.splice(index, 1);
             }
         });
+        this.enemyBullets.forEach((bullet, index) => {
+            bullet.move();
+            if (bullet.y > this.canvas.height) {
+                this.enemyBullets.splice(index, 1);
+            }
+        });
         this.moveInvaders();
+        this.enemyShoot();
         this.handleCollisions();
         this.checkGameState();
 
@@ -254,6 +281,16 @@ class Game {
             this.invaders.forEach(invader => {
                 invader.y += invader.height;
             });
+        }
+    }
+
+    enemyShoot() {
+        if (Math.random() < 0.01) { // 発射確率
+            const aliveInvaders = this.invaders.filter(invader => invader.status === 1);
+            if (aliveInvaders.length > 0) {
+                const randomInvader = aliveInvaders[Math.floor(Math.random() * aliveInvaders.length)];
+                this.enemyBullets.push(new EnemyBullet(randomInvader.x + randomInvader.width / 2 - 2, randomInvader.y + randomInvader.height));
+            }
         }
     }
 
@@ -290,6 +327,21 @@ class Game {
                 this.gameOver();
             }
         });
+
+        // EnemyBullet-Player collision
+        for (let i = this.enemyBullets.length - 1; i >= 0; i--) {
+            const bullet = this.enemyBullets[i];
+            if (
+                bullet.x > this.player.x &&
+                bullet.x < this.player.x + this.player.width &&
+                bullet.y > this.player.y &&
+                bullet.y < this.player.y + this.player.height
+            ) {
+                this.enemyBullets.splice(i, 1);
+                this.gameOver();
+                break;
+            }
+        }
     }
 
     checkGameState() {
@@ -304,6 +356,7 @@ class Game {
         this.drawStars();
         this.player.draw(this.ctx);
         this.bullets.forEach(bullet => bullet.draw(this.ctx));
+        this.enemyBullets.forEach(bullet => bullet.draw(this.ctx));
         this.invaders.forEach(invader => invader.draw(this.ctx));
         this.drawParticles();
     }
