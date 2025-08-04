@@ -1,7 +1,7 @@
 # ブロック崩しゲーム
 <img width="548" height="515" alt="スクリーンショット 2025-07-29 15 22 47" src="https://github.com/user-attachments/assets/d2c14ad0-5ff4-4486-aa56-41a7a97bcae5" />
 
-これは、HTML、CSS、JavaScriptで作成された、モダンなデザインとサウンドを備えたブロック崩しゲームです。
+HTML、CSS、JavaScriptで作成された、モダンなデザインとサウンドを備えたブロック崩しゲームです。
 
 ## 遊び方
 
