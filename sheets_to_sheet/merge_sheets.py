@@ -7,12 +7,14 @@ INPUT_FILE = os.path.expanduser('~/Documents/git/gemini-cli-practice/sheets_to_s
 OUTPUT_FILE = os.path.expanduser('~/Documents/git/gemini-cli-practice/sheets_to_sheet/output/merged_data.xlsx')
 
 # Maps the final desired column name to the keyword to find in the messy header.
+# The order of this dictionary determines the final column order in the output file.
 DESIRED_TO_KEYWORD_MAP = {
     '氏名': '氏名',
     '部署': '課',
     '個人番号': '個人',
     '役員報酬': '役員報酬',
     '基本給': '基本給',
+    '基本給②': '基本給②',
     '役付': '役付',
     '住宅': '住宅',
     '資格': '資格',
@@ -33,23 +35,13 @@ DESIRED_TO_KEYWORD_MAP = {
 }
 
 
-def load_and_combine_sheets(file_path: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Loads an Excel file, separating header and data from all sheets."""
-    xls = pd.ExcelFile(file_path)
-    sheet_names = xls.sheet_names
-
-    header_list = [xls.parse(sheet_name, header=None, skiprows=7, nrows=3) for sheet_name in sheet_names]
-    data_list = [xls.parse(sheet_name, header=None, skiprows=10) for sheet_name in sheet_names]
-
-    header_ref = header_list[0]
-    full_data = pd.concat(data_list, ignore_index=True)
-    return header_ref, full_data
-
 def map_columns(header_ref: pd.DataFrame, keyword_map: Dict[str, str]) -> Dict[int, str]:
     """Maps column indices to desired names based on keywords in the header."""
     col_index_to_name_map = {}
     used_indices = set()
-    for desired_name, keyword in keyword_map.items():
+    # Sort by keyword length (desc) to match more specific names first (e.g., "基本給②" before "基本給")
+    sorted_keyword_map = sorted(keyword_map.items(), key=lambda item: len(str(item[1])), reverse=True)
+    for desired_name, keyword in sorted_keyword_map:
         for i in range(header_ref.shape[1]):
             if i in used_indices:
                 continue
@@ -61,31 +53,65 @@ def map_columns(header_ref: pd.DataFrame, keyword_map: Dict[str, str]) -> Dict[i
                 break
     return col_index_to_name_map
 
-def process_data(full_data: pd.DataFrame, col_map: Dict[int, str], ordered_cols: List[str]) -> pd.DataFrame:
-    """Selects, renames, and cleans the data."""
-    final_df = pd.DataFrame()
-    for col_index, new_name in col_map.items():
-        if col_index < full_data.shape[1]:
-            final_df[new_name] = full_data.iloc[:, col_index]
-
-    if '個人番号' in final_df.columns:
-        final_df.dropna(subset=['個人番号'], inplace=True)
-        final_df = final_df[final_df['個人番号'].astype(str).str.strip().str.lower() != 'nan']
-        final_df = final_df[final_df['個人番号'].astype(str).str.strip() != '']
-
-    return final_df.reindex(columns=ordered_cols)
-
 def main():
     """Main function to run the data processing pipeline."""
     try:
         print("Starting data processing...")
-        header_ref, full_data = load_and_combine_sheets(INPUT_FILE)
-        col_map = map_columns(header_ref, DESIRED_TO_KEYWORD_MAP)
-        final_df = process_data(full_data, col_map, list(DESIRED_TO_KEYWORD_MAP.keys()))
+        xls = pd.ExcelFile(INPUT_FILE)
+        sheet_names = xls.sheet_names
+
+        all_sheets_data = []
+        ordered_cols = list(DESIRED_TO_KEYWORD_MAP.keys())
+
+        for sheet_name in sheet_names:
+            print(f"Processing sheet: {sheet_name}")
+            header_df = xls.parse(sheet_name, header=None, skiprows=7, nrows=3)
+            data_df = xls.parse(sheet_name, header=None, skiprows=10)
+
+            col_map = map_columns(header_df, DESIRED_TO_KEYWORD_MAP)
+
+            sheet_final_df = pd.DataFrame()
+            for col_index, new_name in col_map.items():
+                if col_index < data_df.shape[1]:
+                    sheet_final_df[new_name] = data_df.iloc[:, col_index]
+            
+            all_sheets_data.append(sheet_final_df)
+
+        if not all_sheets_data:
+            print("No data found in any sheets.")
+            return
+            
+        # Combine all processed sheets, filling missing columns with NaN
+        full_data = pd.concat(all_sheets_data, ignore_index=True)
+
+        # Clean the combined data based on the new conditions.
+        # A record is valid if it has:
+        # - a valid '個人番号' AND
+        # - a valid '役員報酬' OR a valid '基本給'
         
+        # Helper function to create a validity mask for a series
+        def is_valid(series):
+            if series is None:
+                return pd.Series([False] * len(full_data), index=full_data.index)
+            s_str = series.astype(str).str.strip().str.lower()
+            return series.notna() & (s_str != '') & (s_str != 'nan')
+
+        # Create masks for each condition
+        id_valid = is_valid(full_data.get('個人番号'))
+        reward_valid = is_valid(full_data.get('役員報酬'))
+        salary_valid = is_valid(full_data.get('基本給'))
+
+        # Apply the final filter
+        full_data = full_data[id_valid & (reward_valid | salary_valid)]
+
+        # Reorder columns to the desired final order
+        final_df = full_data.reindex(columns=ordered_cols)
+
         final_df.to_excel(OUTPUT_FILE, index=False)
         print(f"Successfully processed and saved data to {OUTPUT_FILE}")
 
+    except FileNotFoundError:
+        print(f"Error: Input file not found at {INPUT_FILE}")
     except Exception as e:
         print(f"An error occurred: {e}")
 
