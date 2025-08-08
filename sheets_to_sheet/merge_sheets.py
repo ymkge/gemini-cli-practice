@@ -24,6 +24,7 @@ DESIRED_TO_KEYWORD_MAP = {
     '営業手当': '営業手当',
     '夜勤': '夜勤',
     '欠勤': '欠勤',
+    '出勤日数': '出勤',
     '互助会': '互助会',
     '財形': '財形',
     '旅行２': '旅行２',
@@ -31,7 +32,8 @@ DESIRED_TO_KEYWORD_MAP = {
     '前払退職金②': '前払退職金②',
     'その他': 'その他',
     '保険料': '保険料',
-    '地代': '地代'
+    '地代': '地代',
+    '備考': '備考'
 }
 
 
@@ -86,23 +88,25 @@ def main():
 
         # Clean the combined data based on the new conditions.
         # A record is valid if it has:
-        # - a valid '個人番号' AND
-        # - a valid '役員報酬' OR a valid '基本給'
-        
+        # - a valid '出勤日数' OR
+        # - a valid '役員報酬' OR
+        # - '産業医' in the '備考' column
+
         # Helper function to create a validity mask for a series
         def is_valid(series):
             if series is None:
                 return pd.Series([False] * len(full_data), index=full_data.index)
-            s_str = series.astype(str).str.strip().str.lower()
-            return series.notna() & (s_str != '') & (s_str != 'nan')
+            # Attempt to convert to numeric, coercing errors to NaN
+            numeric_series = pd.to_numeric(series, errors='coerce')
+            return numeric_series.notna() & (numeric_series != 0)
 
         # Create masks for each condition
-        id_valid = is_valid(full_data.get('個人番号'))
+        attendance_valid = is_valid(full_data.get('出勤日数'))
         reward_valid = is_valid(full_data.get('役員報酬'))
-        salary_valid = is_valid(full_data.get('基本給'))
+        doctor_present = full_data.get('備考', pd.Series([], dtype=str)).str.contains('産業医', na=False)
 
         # Apply the final filter
-        full_data = full_data[id_valid & (reward_valid | salary_valid)]
+        full_data = full_data[attendance_valid | reward_valid | doctor_present]
 
         # Reorder columns to the desired final order
         final_df = full_data.reindex(columns=ordered_cols)
