@@ -1,12 +1,22 @@
 import pandas as pd
 import os
 import re
+import sys
 from typing import List, Dict, Tuple, Optional
 from pandas import DataFrame, ExcelFile
 
+# --- Dynamic Path Configuration ---
+# Determine the base path, whether running as a script or a frozen .exe
+if getattr(sys, 'frozen', False):
+    # If the application is run as a bundle/frozen format (e.g., by PyInstaller)
+    BASE_PATH = os.path.dirname(sys.executable)
+else:
+    # If run as a normal .py script
+    BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+
 # --- Constants & Configuration ---
-INPUT_FILE = os.path.expanduser('~/Documents/git/gemini-cli-practice/sheets_to_sheet/input/AIデータ.xlsx')
-OUTPUT_FILE = os.path.expanduser('~/Documents/git/gemini-cli-practice/sheets_to_sheet/output/merged_data.xlsx')
+INPUT_FILE = os.path.join(BASE_PATH, 'input', 'AIデータ.xlsx')
+OUTPUT_FILE = os.path.join(BASE_PATH, 'output', 'merged_data.xlsx')
 
 DESIRED_TO_KEYWORD_MAP = {
     '氏名': '氏名', '部署': '課', '個人番号': '個人', '役員報酬': '役員報酬', '基本給': '基本給',
