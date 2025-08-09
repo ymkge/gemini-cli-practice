@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import re
 from typing import List, Dict, Tuple
 
 # --- Configuration ---
@@ -60,19 +61,39 @@ def map_columns(header_ref: pd.DataFrame, keyword_map: Dict[str, str]) -> Dict[i
     """Maps column indices to desired names based on keywords in the header."""
     col_index_to_name_map = {}
     used_indices = set()
-    # Sort by keyword length (desc) to match more specific names first (e.g., "基本給②" before "基本給")
-    sorted_keyword_map = sorted(keyword_map.items(), key=lambda item: len(str(item[1])), reverse=True)
-    for desired_name, keyword in sorted_keyword_map:
+
+    # Define the processing order manually to handle conflicts.
+    # More specific keywords must come before less specific ones to avoid incorrect mapping.
+    processing_order = [
+        '基本給②', '前払退職金①', '前払退職金②', '役員報酬', '基本給', '氏名', '部署',
+        '個人番号', '役付', '住宅', '資格', '業務手当', '家族', '通勤',
+        '営業手当', '夜勤', '欠勤', '出勤日数', '互助会', '財形', '旅行２',
+        'その他', '保険料', '地代', '備考'
+    ]
+
+    # Create a list of (desired_name, keyword) tuples in the correct processing order
+    processing_list = [(name, keyword_map[name]) for name in processing_order if name in keyword_map]
+
+    for desired_name, keyword in processing_list:
         for i in range(header_ref.shape[1]):
             if i in used_indices:
                 continue
-            # Combine the 3 header rows for a given column into a single string for searching
+            
             header_cell_str = ' '.join(str(header_ref.iloc[row, i]) for row in range(header_ref.shape[0]) if pd.notna(header_ref.iloc[row, i]))
             searchable_header = header_cell_str.replace(' ', '').replace('　', '')
 
-            # Special handling for '氏名' to accommodate variable spacing
+            if not searchable_header:
+                continue
+
+            # Special handling for '氏名'
             if desired_name == '氏名':
                 if '氏' in searchable_header and '名' in searchable_header:
+                    col_index_to_name_map[i] = desired_name
+                    used_indices.add(i)
+                    break
+            # Special handling for '基本給②' to accept '基本給2'
+            elif desired_name == '基本給②':
+                if '基本給②' in searchable_header or '基本給2' in searchable_header:
                     col_index_to_name_map[i] = desired_name
                     used_indices.add(i)
                     break
@@ -101,7 +122,6 @@ def main():
         for sheet_name in sheet_names:
             print(f"Processing sheet: {sheet_name}")
 
-            # Dynamically find the header start row by looking for a cell with '氏' and '名'
             header_start_row = find_header_start_row(xls, sheet_name)
 
             if header_start_row == -1:
@@ -110,7 +130,6 @@ def main():
 
             print(f"  [Info] Found header starting at row {header_start_row + 1}")
 
-            # Read the 3-row header and the data table based on the dynamically found start row
             header_df = xls.parse(sheet_name, header=None, skiprows=header_start_row, nrows=3)
             data_df = xls.parse(sheet_name, header=None, skiprows=header_start_row + 3)
 
@@ -131,39 +150,71 @@ def main():
             print("No data could be processed from any sheets.")
             return
             
-        # Combine all processed sheets, filling missing columns with NaN
         full_data = pd.concat(all_sheets_data, ignore_index=True)
 
-        # Clean the combined data based on the original conditions.
-        # A record is valid if it meets any of the following criteria:
-        # 1. '出勤日数' is a number greater than 0.
-        # 2. '役員報酬' is a number greater than 0.
-        # 3. '備考' contains the string '産業医'.
+        # --- Special Calculation for Daily Rate Employees ---
+        def extract_number(text):
+            if not isinstance(text, str):
+                return None
+            # Replace full-width '＠' with half-width '@' and remove commas
+            text_normalized = text.replace('＠', '@').replace(',', '')
+            # Search for numbers following an '@' symbol
+            match = re.search(r'@(\d+)', text_normalized)
+            if match:
+                return pd.to_numeric(match.group(1), errors='coerce')
+            return None
 
-        # Helper function to create a validity mask for a numeric series
+        for index, row in full_data.iterrows():
+            yakutsuki_val = row.get('役付')
+            
+            if isinstance(yakutsuki_val, str) and '日額' in yakutsuki_val:
+                yakutsuki_rate = extract_number(yakutsuki_val)
+                tsukin_rate = extract_number(row.get('通勤'))
+                shukkin_days = pd.to_numeric(row.get('出勤日数'), errors='coerce')
+                
+                if pd.notna(yakutsuki_rate) and pd.notna(shukkin_days):
+                    full_data.loc[index, '基本給'] = yakutsuki_rate * shukkin_days
+                
+                if pd.notna(tsukin_rate) and pd.notna(shukkin_days):
+                    full_data.loc[index, '通勤'] = tsukin_rate * shukkin_days
+                
+                # Update '備考' and clear '役付'
+                original_tsukin_val = row.get('通勤')
+                original_remark = row.get('備考')
+
+                # Build the new remark string part
+                new_remark_part = yakutsuki_val
+                if isinstance(original_tsukin_val, str) and pd.notna(original_tsukin_val):
+                    new_remark_part += f"/ 通勤{original_tsukin_val}"
+
+                # Append to original remark or set as new
+                if isinstance(original_remark, str) and pd.notna(original_remark):
+                    full_data.loc[index, '備考'] = f"{original_remark} {new_remark_part}"
+                else:
+                    full_data.loc[index, '備考'] = new_remark_part
+                
+                # Clear the '役付' value
+                full_data.loc[index, '役付'] = ' '
+        # --- End Special Calculation ---
+
+        # Clean the combined data based on the original conditions.
         def is_valid_numeric(series):
             if series is None:
                 return pd.Series([False] * len(full_data), index=full_data.index)
-            # Attempt to convert to numeric, coercing errors to NaN, then check condition
             numeric_series = pd.to_numeric(series, errors='coerce')
             return numeric_series.notna() & (numeric_series > 0)
 
-        # Helper function to create a validity mask for a text series
         def contains_text(series, text):
             if series is None:
                 return pd.Series([False] * len(full_data), index=full_data.index)
-            # Check for the presence of the text, handling potential NaN values
             return series.astype(str).str.contains(text, na=False)
 
-        # Create masks for each condition
         attendance_valid = is_valid_numeric(full_data.get('出勤日数'))
         reward_valid = is_valid_numeric(full_data.get('役員報酬'))
         doctor_present = contains_text(full_data.get('備考'), '産業医')
 
-        # Apply the final filter: a row is kept if any of the conditions are true
         full_data = full_data[attendance_valid | reward_valid | doctor_present]
 
-        # Reorder columns to the desired final order
         final_df = full_data.reindex(columns=ordered_cols)
 
         final_df.to_excel(OUTPUT_FILE, index=False)
