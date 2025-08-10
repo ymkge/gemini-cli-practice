@@ -116,14 +116,64 @@ score_map_reverse = {
 if 'answers' not in st.session_state:
     st.session_state.answers = {}
 
+# カスタムCSSを適用
+st.markdown("""
+<style>
+/* 質問のテキスト */
+.question-text {
+    font-size: 1.1rem; /* 少し大きくする */
+    font-weight: bold;
+    margin-bottom: 10px; /* ラジオボタンとの間隔 */
+}
+/* ラジオボタンのコンテナ */
+div.row-widget.stRadio > div {
+    flex-direction: row;
+    justify-content: space-around; /* 均等に配置 */
+    padding-top: 0px;
+}
+/* ラジオボタンのラベル（選択肢） */
+div.row-widget.stRadio > div > label {
+    display: inline-block;
+    padding: 8px 20px; /* パディングを調整 */
+    border: 1px solid #ccc;
+    border-radius: 25px; /* 角を丸くする */
+    margin: 0 5px;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    background-color: #f8f9fa;
+}
+/* 選択時のラジオボタンのスタイル */
+div.row-widget.stRadio > div > label:has(input:checked) {
+    background-color: #28a745; /* 緑色に変更 */
+    color: white;
+    border-color: #28a745;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+/* ホバー時のラジオボタンのスタイル */
+div.row-widget.stRadio > div > label:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+/* ラジオボタンの非表示 */
+div.row-widget.stRadio > div > label > input {
+    display: none;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 # 質問の表示
 for q in questions_data:
+    # st.markdownを使って質問文をスタイリング
+    st.markdown(f'<p class="question-text">{q["text"]}</p>', unsafe_allow_html=True)
+    # ラベルを空にしてラジオボタンを横並びに表示
     st.session_state.answers[q["id"]] = st.radio(
-        label=q["text"],
+        label="",
         options=options,
         key=q["id"],
-        horizontal=True
+        horizontal=True,
     )
+    st.markdown("---") # 質問ごとに区切り線を入れる
 
 # 診断ボタン
 if st.button("診断結果を見る"):
@@ -149,9 +199,52 @@ if st.button("診断結果を見る"):
         st.header("診断結果")
         st.write("各尺度の点数（点数が高いほどストレスが高い傾向にあります）")
 
-        # 結果をデータフレームに変換して表示
-        df_scores = pd.DataFrame(list(scale_scores.items()), columns=["尺度", "合計点"])
-        st.dataframe(df_scores.set_index("尺度"))
+        # 척도별 최대 점수 계산
+        max_scores = {scale_name: len(question_ids) * 4 for scale_name, question_ids in scales.items()}
+
+        # カスタムCSS
+        st.markdown("""
+        <style>
+        .result-container {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .scale-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .score-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+            text-align: right;
+        }
+        .score-text {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: right;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # 結果をリッチなデザインで表示
+        for scale_name, score in scale_scores.items():
+            max_score = max_scores[scale_name]
+            progress_value = score / max_score
+
+            st.markdown(f'<div class="result-container">', unsafe_allow_html=True)
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.markdown(f'<p class="scale-name">{scale_name}</p>', unsafe_allow_html=True)
+                st.progress(progress_value)
+            with col2:
+                st.markdown(f'<p class="score-display">{score}</p>', unsafe_allow_html=True)
+                st.markdown(f'<p class="score-text">/ {max_score}</p>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
         # ストレス要因、ストレス反応、サポートの3つの主要なカテゴリの合計点を計算
         total_stressor_score = sum(scale_scores[s] for s in ["量的負担", "質的負担", "裁量権", "仕事の適性", "職場人間関係", "職場環境"])
