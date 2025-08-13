@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フラッシュ暗算ゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>フラッシュ暗算</h1>
+        <div id="setup">
+            <label for="level">レベル選択:</label>
+            <select id="level">
+                <option value="1">LV 1</option>
+                <option value="2">LV 2</option>
+                <option value="3">LV 3</option>
+                <option value="4">LV 4</option>
+                <option value="5">LV 5</option>
+                <option value="6">LV 6</option>
+                <option value="7">LV 7</option>
+                <option value="8">LV 8</option>
+                <option value="9">LV 9</option>
+                <option value="10">LV 10</option>
+            </select>
+            <button id="start-btn">スタート</button>
+        </div>
+        <div id="game-area" class="hidden">
+            <div id="number-display"></div>
+        </div>
+        <div id="input-area" class="hidden">
+            <input type="number" id="answer-input" placeholder="合計は？">
+            <button id="submit-btn">こたえあわせ</button>
+        </div>
+        <div id="result-area"></div>
+        <div id="score-area">
+            スコア: <span id="score">0</span>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
