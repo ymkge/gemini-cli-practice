@@ -1,4 +1,5 @@
 # フラッシュ暗算ゲーム
+<img width="529" height="425" alt="スクリーンショット 2025-08-13 20 11 58" src="https://github.com/user-attachments/assets/4a49fff8-749b-4fb2-8467-39a201877bd7" />
 
 ブラウザで遊べるシンプルなフラッシュ暗算ゲームです。
 
