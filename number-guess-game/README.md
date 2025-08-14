@@ -1,4 +1,5 @@
 # 数字当てゲーム
+<img width="517" height="416" alt="スクリーンショット 2025-08-14 20 10 41" src="https://github.com/user-attachments/assets/b16e12cf-4980-495d-b467-29f560a91c45" />
 
 ## 概要
 
