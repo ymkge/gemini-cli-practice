@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字当てゲーム</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>数字当てゲーム</h1>
+        </header>
+        <main>
+            <p class="description">1から100までの数字を当ててね！</p>
+            <div class="game-area">
+                <input type="number" id="guess-input" min="1" max="100" placeholder="数字を入力">
+                <button id="guess-button">Guess</button>
+            </div>
+            <div class="result-area">
+                <p id="message"></p>
+                <p id="attempts"></p>
+            </div>
+            <button id="reset-button" class="hidden">Play Again</button>
+        </main>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
