@@ -1,68 +1,82 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const guessInput = document.getElementById('guess-input');
-    const guessButton = document.getElementById('guess-button');
-    const resetButton = document.getElementById('reset-button');
-    const messageEl = document.getElementById('message');
-    const attemptsEl = document.getElementById('attempts');
+class NumberGuessGame {
+    constructor(min, max) {
+        this.min = min;
+        this.max = max;
 
-    let secretNumber;
-    let attempts;
+        this.guessInput = document.getElementById('guess-input');
+        this.guessButton = document.getElementById('guess-button');
+        this.resetButton = document.getElementById('reset-button');
+        this.messageEl = document.getElementById('message');
+        this.attemptsEl = document.getElementById('attempts');
 
-    function init() {
-        secretNumber = Math.floor(Math.random() * 100) + 1;
-        attempts = 0;
-        messageEl.textContent = '';
-        attemptsEl.textContent = '';
-        guessInput.value = '';
-        guessInput.disabled = false;
-        guessButton.disabled = false;
-        resetButton.classList.add('hidden');
-        guessInput.focus();
+        this.secretNumber = 0;
+        this.attempts = 0;
+
+        this.addEventListeners();
+        this.init();
     }
 
-    function checkGuess() {
-        const userGuess = parseInt(guessInput.value);
+    init() {
+        this.secretNumber = Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
+        this.attempts = 0;
+        this.updateMessage('', '');
+        this.updateAttempts('');
+        this.guessInput.value = '';
+        this.guessInput.disabled = false;
+        this.guessButton.disabled = false;
+        this.resetButton.classList.add('hidden');
+        this.guessInput.focus();
+    }
 
-        if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
-            displayMessage('1から100までの数字を入力してね', 'error');
+    addEventListeners() {
+        this.guessButton.addEventListener('click', () => this.checkGuess());
+        this.resetButton.addEventListener('click', () => this.init());
+        this.guessInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                this.checkGuess();
+            }
+        });
+    }
+
+    checkGuess() {
+        const userGuess = parseInt(this.guessInput.value, 10);
+
+        if (isNaN(userGuess) || userGuess < this.min || userGuess > this.max) {
+            this.updateMessage(`1から100までの数字を入力してね`, 'error');
             return;
         }
 
-        attempts++;
-        attemptsEl.textContent = `試行回数: ${attempts}`;
+        this.attempts++;
+        this.updateAttempts(`試行回数: ${this.attempts}`);
 
-        if (userGuess === secretNumber) {
-            displayMessage('🎉 正解！ 🎉', 'success');
-            endGame();
-        } else if (userGuess < secretNumber) {
-            displayMessage('もっと大きいよ！', 'low');
+        if (userGuess === this.secretNumber) {
+            this.updateMessage('🎉 正解！ 🎉', 'success');
+            this.endGame();
+        } else if (userGuess < this.secretNumber) {
+            this.updateMessage('もっと大きいよ！', 'low');
         } else {
-            displayMessage('もっと小さいよ！', 'high');
+            this.updateMessage('もっと小さいよ！', 'high');
         }
-        guessInput.value = '';
-        guessInput.focus();
+        this.guessInput.value = '';
+        this.guessInput.focus();
     }
 
-    function displayMessage(msg, type) {
-        messageEl.textContent = msg;
-        messageEl.className = type; // for potential styling based on message type
+    updateMessage(msg, type) {
+        this.messageEl.textContent = msg;
+        this.messageEl.className = type;
     }
 
-    function endGame() {
-        guessInput.disabled = true;
-        guessButton.disabled = true;
-        resetButton.classList.remove('hidden');
+    updateAttempts(text) {
+        this.attemptsEl.textContent = text;
     }
 
-    guessButton.addEventListener('click', checkGuess);
-    resetButton.addEventListener('click', init);
+    endGame() {
+        this.guessInput.disabled = true;
+        this.guessButton.disabled = true;
+        this.resetButton.classList.remove('hidden');
+    }
+}
 
-    guessInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            checkGuess();
-        }
-    });
-
-    // Initialize the game
-    init();
+document.addEventListener('DOMContentLoaded', () => {
+    new NumberGuessGame(1, 100);
 });
