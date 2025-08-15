@@ -1,4 +1,5 @@
 # 職業性ストレスチェックアプリ
+<img width="830" height="766" alt="スクリーンショット 2025-08-15 18 06 05" src="https://github.com/user-attachments/assets/b8adc0d7-64ac-4603-9e73-73027a291876" />
 
 ## 概要
 
