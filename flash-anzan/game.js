@@ -22,16 +22,16 @@ class FlashAnzanGame {
         };
 
         this.levelSettings = {
-            1: { count: 3, speed: 1000 },
-            2: { count: 4, speed: 900 },
-            3: { count: 5, speed: 800 },
-            4: { count: 6, speed: 700 },
-            5: { count: 7, speed: 600 },
-            6: { count: 8, speed: 500 },
-            7: { count: 9, speed: 450 },
-            8: { count: 10, speed: 400 },
-            9: { count: 12, speed: 350 },
-            10: { count: 15, speed: 300 },
+            1: { count: 2, speed: 1000 },
+            2: { count: 3, speed: 900 },
+            3: { count: 4, speed: 800 },
+            4: { count: 5, speed: 700 },
+            5: { count: 6, speed: 600 },
+            6: { count: 7, speed: 500 },
+            7: { count: 8, speed: 450 },
+            8: { count: 9, speed: 400 },
+            9: { count: 10, speed: 350 },
+            10: { count: 12, speed: 300 },
         };
 
         this.init();
