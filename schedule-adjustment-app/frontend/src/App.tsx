@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './api'; // Import the api instance
 import {
   AppBar,
   Toolbar,
@@ -13,72 +12,21 @@ import {
   CardActions,
 } from '@mui/material';
 
-// バックエンドサーバーのURL
-const BACKEND_URL = 'http://localhost:3001';
-
-// axiosのインスタンスを作成し、クレデンシャル情報を含める設定を行う
-const api = axios.create({
-  baseURL: BACKEND_URL,
-  withCredentials: true, // クッキーなどのクレデンシャル情報をリクエストに含める
-});
+import { useEffect } from 'react'; // useEffect is still needed for the cleanup logic
+import { useAuth } from './hooks/useAuth'; // Import useAuth hook
+import { useCalendar } from './hooks/useCalendar'; // Import useCalendar hook
 
 function App() {
-  const [user, setUser] = useState<any>(null);
-  const [freeBusyData, setFreeBusyData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const { user, handleLogin, handleLogout, setUser } = useAuth();
+  const { freeBusyData, loading, error, handleFetchFreeBusy, setFreeBusyData } = useCalendar();
 
-  // コンポーネントのマウント時にログイン状態を確認
+  // When user logs out, clear calendar data
+  // This useEffect is needed because useAuth and useCalendar are separate hooks
   useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const { data } = await api.get('/auth/me');
-        setUser(data);
-      } catch (error) {
-        console.error('Error checking login status:', error);
-        setUser(null);
-      }
-    };
-    checkLoginStatus();
-  }, []);
-
-  // ログイン処理
-  const handleLogin = () => {
-    window.open(`${BACKEND_URL}/auth/google`, '_self');
-  };
-
-  // ログアウト処理
-  const handleLogout = async () => {
-    try {
-      await api.get('/auth/logout');
-      setUser(null);
+    if (!user) {
       setFreeBusyData(null);
-    } catch (error) {
-      console.error('Error logging out:', error);
     }
-  };
-
-  // 空き時間取得処理
-  const handleFetchFreeBusy = async () => {
-    setLoading(true);
-    setError('');
-    setFreeBusyData(null);
-    try {
-      const timeMin = new Date().toISOString();
-      const timeMax = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7日後
-
-      const { data } = await api.post('/api/calendar/freebusy', {
-        timeMin,
-        timeMax,
-      });
-      setFreeBusyData(data);
-    } catch (err) {
-      console.error('Error fetching free-busy data:', err);
-      setError('Failed to fetch calendar data. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [user, setFreeBusyData]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
