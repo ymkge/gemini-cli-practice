@@ -1,24 +1,12 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { google } from 'googleapis';
-import asyncHandler from 'express-async-handler'; // Add this line
+import asyncHandler from 'express-async-handler';
 
-const router = Router();
-
-// ユーザーが認証済みか確認するミドルウェア
-const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ message: 'Unauthorized' });
-};
-
-// カレンダーの空き時間を取得するAPI
-router.post('/calendar/freebusy', isAuthenticated, asyncHandler(async (req, res) => { // Wrap with asyncHandler
+// カレンダーの空き時間を取得するコントローラ
+export const getFreeBusy = asyncHandler(async (req: Request, res: Response) => {
   // セッションからユーザー情報を取得
   const user: any = req.user;
   if (!user || !user.accessToken) {
-    // throw new Error('Access token not found'); // エラーハンドラに任せる
-    // Custom error for 401
     const error: any = new Error('Access token not found');
     error.statusCode = 401;
     throw error;
@@ -27,8 +15,6 @@ router.post('/calendar/freebusy', isAuthenticated, asyncHandler(async (req, res)
   // リクエストボディから検索期間を取得
   const { timeMin, timeMax } = req.body;
   if (!timeMin || !timeMax) {
-    // throw new Error('timeMin and timeMax are required'); // エラーハンドラに任せる
-    // Custom error for 400
     const error: any = new Error('timeMin and timeMax are required');
     error.statusCode = 400;
     throw error;
@@ -51,6 +37,4 @@ router.post('/calendar/freebusy', isAuthenticated, asyncHandler(async (req, res)
   });
 
   res.status(200).json(freeBusyResponse.data);
-})); // Close asyncHandler
-
-export default router;
+});

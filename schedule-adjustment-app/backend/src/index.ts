@@ -5,6 +5,7 @@ import passport from 'passport';
 import cors from 'cors';
 import authRoutes from './routes/auth';
 import apiRoutes from './routes/api';
+import errorHandler from './middlewares/errorHandler'; // Add this line
 
 // Passport config
 import './services/passport';
@@ -15,10 +16,6 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Middlewares
-app.use((req, res, next) => {
-  console.log(`[request]: ${req.method} ${req.originalUrl}`);
-  next();
-});
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -49,6 +46,8 @@ app.use('/api', apiRoutes);
 app.get('/', (req: Request, res: Response) => {
   res.send('Backend server is running!');
 });
+
+app.use(errorHandler); // Error handling middleware
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
