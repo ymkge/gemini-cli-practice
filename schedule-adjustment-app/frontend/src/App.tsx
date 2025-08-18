@@ -1,4 +1,3 @@
-import api from './api'; // Import the api instance
 import {
   AppBar,
   Toolbar,
@@ -17,7 +16,7 @@ import { useAuth } from './hooks/useAuth'; // Import useAuth hook
 import { useCalendar } from './hooks/useCalendar'; // Import useCalendar hook
 
 function App() {
-  const { user, handleLogin, handleLogout, setUser } = useAuth();
+  const { user, handleLogin, handleLogout } = useAuth(); // Removed setUser
   const { freeBusyData, loading, error, handleFetchFreeBusy, setFreeBusyData } = useCalendar();
 
   // When user logs out, clear calendar data

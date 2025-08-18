@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api'; // apiインスタンスをインポート
-import { User } from '../types/user'; // User型をインポート
+import type { User } from '../types/user'; // User型をインポート
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
