@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { google } from 'googleapis';
-import asyncHandler from 'express-async-handler'; // Add this line
+import { getFreeBusy } from '../controllers/calendarController'; // Import the controller
+import { body, validationResult } from 'express-validator'; // Add this line
 
 const router = Router();
 
@@ -12,45 +12,20 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   res.status(401).json({ message: 'Unauthorized' });
 };
 
+// バリデーションミドルウェア
+const validateFreeBusyRequest = [
+  body('timeMin').isISO8601().withMessage('timeMin must be a valid ISO 8601 date string'),
+  body('timeMax').isISO8601().withMessage('timeMax must be a valid ISO 8601 date string'),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  }
+];
+
 // カレンダーの空き時間を取得するAPI
-router.post('/calendar/freebusy', isAuthenticated, asyncHandler(async (req, res) => { // Wrap with asyncHandler
-  // セッションからユーザー情報を取得
-  const user: any = req.user;
-  if (!user || !user.accessToken) {
-    // throw new Error('Access token not found'); // エラーハンドラに任せる
-    // Custom error for 401
-    const error: any = new Error('Access token not found');
-    error.statusCode = 401;
-    throw error;
-  }
-
-  // リクエストボディから検索期間を取得
-  const { timeMin, timeMax } = req.body;
-  if (!timeMin || !timeMax) {
-    // throw new Error('timeMin and timeMax are required'); // エラーハンドラに任せる
-    // Custom error for 400
-    const error: any = new Error('timeMin and timeMax are required');
-    error.statusCode = 400;
-    throw error;
-  }
-
-  // OAuth2クライアントをセットアップ
-  const oauth2Client = new google.auth.OAuth2();
-  oauth2Client.setCredentials({ access_token: user.accessToken });
-
-  // Calendar APIクライアントを作成
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-
-  // freebusy情報を取得
-  const freeBusyResponse = await calendar.freebusy.query({
-    requestBody: {
-      timeMin: timeMin, // 例: '2024-05-23T00:00:00Z'
-      timeMax: timeMax, // 例: '2024-05-30T23:59:59Z'
-      items: [{ id: 'primary' }], // 自分のプライマリカレンダー
-    },
-  });
-
-  res.status(200).json(freeBusyResponse.data);
-})); // Close asyncHandler
+router.post('/calendar/freebusy', isAuthenticated, validateFreeBusyRequest, getFreeBusy); // Add validation middleware
 
 export default router;
