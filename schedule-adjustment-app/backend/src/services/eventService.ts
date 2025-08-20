@@ -1,27 +1,34 @@
-import { Event, CandidateDate } from '../types/event';
-import { v4 as uuidv4 } from 'uuid';
+import { AppDataSource } from '../data-source';
+import { Event } from '../entity/Event';
+import { CandidateDate } from '../entity/CandidateDate';
 
-const events: Event[] = [];
+export const createEvent = async (title: string, description: string, candidateDatesData: { date: string; time: string }[]): Promise<Event> => {
+  const eventRepository = AppDataSource.getRepository(Event);
+  const candidateDateRepository = AppDataSource.getRepository(CandidateDate);
 
-export const createEvent = (title: string, description: string, candidateDatesData: { date: string; time: string }[]): Event => {
-  const newEvent: Event = {
-    id: uuidv4(),
-    title,
-    description,
-    candidateDates: candidateDatesData.map(cd => ({
-      id: uuidv4(),
-      date: cd.date,
-      time: cd.time,
-    })),
-  };
-  events.push(newEvent);
+  const newEvent = new Event();
+  newEvent.title = title;
+  newEvent.description = description;
+
+  const newCandidateDates = candidateDatesData.map(cd => {
+    const candidateDate = new CandidateDate();
+    candidateDate.date = cd.date;
+    candidateDate.time = cd.time;
+    return candidateDate;
+  });
+
+  newEvent.candidateDates = newCandidateDates;
+
+  await eventRepository.save(newEvent);
   return newEvent;
 };
 
-export const getEventById = (id: string): Event | undefined => {
-  return events.find(event => event.id === id);
+export const getEventById = async (id: string): Promise<Event | undefined> => {
+  const eventRepository = AppDataSource.getRepository(Event);
+  return eventRepository.findOne({ where: { id }, relations: ['candidateDates'] });
 };
 
-export const getAllEvents = (): Event[] => {
-  return events;
+export const getAllEvents = async (): Promise<Event[]> => {
+  const eventRepository = AppDataSource.getRepository(Event);
+  return eventRepository.find({ relations: ['candidateDates'] });
 };
