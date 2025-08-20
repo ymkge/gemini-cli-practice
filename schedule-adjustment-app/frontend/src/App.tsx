@@ -14,6 +14,7 @@ import {
 import { useEffect } from 'react'; // useEffect is still needed for the cleanup logic
 import { useAuth } from './hooks/useAuth'; // Import useAuth hook
 import { useCalendar } from './hooks/useCalendar'; // Import useCalendar hook
+import EventCreationForm from './components/EventCreationForm'; // Import EventCreationForm
 
 function App() {
   const { user, handleLogin, handleLogout } = useAuth(); // Removed setUser
@@ -47,17 +48,22 @@ function App() {
       </AppBar>
       <Container sx={{ mt: 4 }}>
         {user ? (
-          <Card>
-            <CardContent>
-              <Typography variant="h5">Welcome, {user.displayName}!</Typography>
-              <Typography color="text.secondary">Email: {user.emails[0].value}</Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" onClick={handleFetchFreeBusy} disabled={loading}>
-                Fetch My Calendar (Next 7 Days)
-              </Button>
-            </CardActions>
-          </Card>
+          <>
+            <Card>
+              <CardContent>
+                <Typography variant="h5">Welcome, {user.displayName}!</Typography>
+                <Typography color="text.secondary">Email: {user.emails[0].value}</Typography>
+              </CardContent>
+              <CardActions>
+                <Button variant="contained" onClick={handleFetchFreeBusy} disabled={loading}>
+                  Fetch My Calendar (Next 7 Days)
+                </Button>
+              </CardActions>
+            </Card>
+            <Box sx={{ mt: 4 }}>
+              <EventCreationForm />
+            </Box>
+          </>
         ) : (
           <Typography variant="h5" align="center">Please log in to continue.</Typography>
         )}

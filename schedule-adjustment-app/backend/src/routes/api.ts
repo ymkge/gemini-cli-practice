@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { getFreeBusy } from '../controllers/calendarController'; // Import the controller
 import { body, validationResult } from 'express-validator'; // Add this line
+import eventRoutes from './eventRoutes'; // Import event routes
 
 const router = Router();
 
@@ -27,5 +28,8 @@ const validateFreeBusyRequest = [
 
 // カレンダーの空き時間を取得するAPI
 router.post('/calendar/freebusy', isAuthenticated, validateFreeBusyRequest, getFreeBusy); // Add validation middleware
+
+// Event routes
+router.use(eventRoutes);
 
 export default router;
