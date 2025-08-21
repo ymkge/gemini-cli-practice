@@ -115,4 +115,4 @@ uvicorn main:app --reload
 
 ## ライセンス
 
-[必要であればライセンス情報をここに記述]
+このプロジェクトはMITライセンスの下で公開されています。詳細は[LICENSE.txt](LICENSE.txt)をご覧ください。
