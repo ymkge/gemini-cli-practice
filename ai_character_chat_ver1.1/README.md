@@ -1,4 +1,7 @@
 # AI Character Chat Application
+> NOTE
+> こちらのアプリ機能は git/ai_character_chat_emotion_Illustratorへ正式版を移行済みの為、こちらの更新はSTOPしてます。
+
 <img width="1217" height="736" alt="スクリーンショット 2025-08-23 18 09 03" src="https://github.com/user-attachments/assets/add95c4d-ac91-4d7b-952d-9f8a18881122" />
 
 ## プロジェクト概要
