@@ -1,4 +1,6 @@
 # 📝 コンプライアンス校正アプリ
+> NOTE
+> このアプリはcompliance_check_streamlitというリポジトリへ本リリースした為、今後はそちらを更新するため、こちらは更新停止します。
 <img width="1799" height="904" alt="スクリーンショット 2025-08-23 23 39 12" src="https://github.com/user-attachments/assets/e81783c9-0cb4-4c9e-a884-75914d7b8443" />
 
 ## 概要
