@@ -1,5 +1,5 @@
 # 📝 コンプライアンス校正アプリ
-![スクリーンショット 2025-07-10 0 53 19](https://github.com/user-attachments/assets/2c5a7f19-1826-4886-87d3-899dd28d4dd9)
+<img width="1799" height="904" alt="スクリーンショット 2025-08-23 23 39 12" src="https://github.com/user-attachments/assets/e81783c9-0cb4-4c9e-a884-75914d7b8443" />
 
 ## 概要
 
