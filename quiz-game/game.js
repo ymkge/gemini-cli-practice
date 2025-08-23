@@ -5,9 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreElement = document.getElementById('score');
     const restartBtn = document.getElementById('restart-btn');
     const exitBtn = document.getElementById('exit-btn');
-    const questionContainer = document.getElementById('question-container');
+    const quizContainer = document.getElementById('quiz-container');
     const questionNumberElement = document.getElementById('question-number');
     const currentScoreElement = document.getElementById('current-score');
+    const progressBar = document.getElementById('progress-bar');
 
     let questions = [];
     let currentQuestionIndex = 0;
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             startGame();
         } catch (error) {
             console.error('There has been a problem with your fetch operation:', error);
-            questionElement.textContent = '問題の読み込みに失敗しました。ページをリロードしてください。';
+            questionElement.textContent = 'Failed to load questions. Please refresh the page.';
         }
     }
 
@@ -33,29 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
         score = 0;
         currentQuestionIndex = 0;
         resultContainer.classList.add('hidden');
-        questionContainer.classList.remove('hidden');
-        exitBtn.classList.remove('hidden');
+        quizContainer.classList.remove('hidden');
         selectedQuestions = getRandomQuestions(questions, 5);
         updateProgress();
         displayQuestion();
     }
 
     function getRandomQuestions(allQuestions, numQuestions) {
-        const shuffled = [...allQuestions];
-        let currentIndex = shuffled.length;
-        let randomIndex;
-
-        // While there remain elements to shuffle.
-        while (currentIndex !== 0) {
-            // Pick a remaining element.
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-
-            // And swap it with the current element.
-            [shuffled[currentIndex], shuffled[randomIndex]] = [
-                shuffled[randomIndex], shuffled[currentIndex]];
-        }
-
+        const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
         return shuffled.slice(0, numQuestions);
     }
 
@@ -82,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         buttons.forEach(btn => btn.disabled = true);
 
         if (selectedChoice === currentQuestion.answer) {
-            score += 20; // 1問あたり20点
+            score += 20;
             button.classList.add('correct');
         } else {
             button.classList.add('incorrect');
@@ -97,17 +83,19 @@ document.addEventListener('DOMContentLoaded', () => {
             currentQuestionIndex++;
             updateProgress();
             displayQuestion();
-        }, 1500);
+        }, 1200);
     }
 
     function showResult() {
-        questionContainer.classList.add('hidden');
-        exitBtn.classList.add('hidden');
+        quizContainer.classList.add('hidden');
         resultContainer.classList.remove('hidden');
         scoreElement.textContent = score;
     }
 
     function updateProgress() {
+        const progressPercentage = (currentQuestionIndex / selectedQuestions.length) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        
         if (currentQuestionIndex < selectedQuestions.length) {
             questionNumberElement.textContent = currentQuestionIndex + 1;
         }

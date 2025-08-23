@@ -3,25 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アニメクイズゲーム</title>
+    <title>Quiz Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="quiz-container">
-        <div id="question-container">
+    <div class="app-container">
+        <div id="quiz-container" class="quiz-card">
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="question-header">
+                <p>Question <span id="question-number">1</span> / 5</p>
+                <p class="score">Score: <span id="current-score">0</span></p>
+            </div>
             <h2 id="question"></h2>
             <div id="choices" class="choices-grid"></div>
+            <button id="exit-btn" class="control-btn">Exit Game</button>
         </div>
-        <div id="result-container" class="hidden">
-            <h2>結果発表</h2>
-            <p>あなたのスコアは <span id="score">0</span> 点です！</p>
-            <button id="restart-btn">もう一度挑戦する</button>
+
+        <div id="result-container" class="quiz-card hidden">
+            <h2>Quiz Completed!</h2>
+            <p>Your final score is</p>
+            <p class="final-score"><span id="score">0</span></p>
+            <button id="restart-btn" class="control-btn">Play Again</button>
         </div>
-        <div id="progress-container">
-            <p>問題 <span id="question-number">1</span> / 5</p>
-            <p>スコア: <span id="current-score">0</span></p>
-        </div>
-        <button id="exit-btn">ゲームを終了</button>
     </div>
     <script src="game.js"></script>
 </body>
