@@ -29,7 +29,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/ymto/Documents/git/gemini-cli-practice/ai-character-chat/backend/venv"
+set -gx VIRTUAL_ENV "/Users/ymto/Documents/git/gemini-cli-practice/ai_character_chat_ver1.1/backend/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
