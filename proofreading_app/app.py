@@ -7,11 +7,19 @@ import pandas as pd
 # Set page config
 st.set_page_config(layout="wide", page_title="コンプライアンスチェックアプリ", page_icon="✅")
 
-
-
 # App title
 st.title("📝 コンプライアンス校正アプリ")
 st.markdown("このアプリケーションは、Gemini APIを使用して、テキスト内の不適切な表現をチェックします。")
+
+# --- Secrets Handling ---
+try:
+    api_key = st.secrets["api_key"]
+except FileNotFoundError:
+    st.error("Secretsファイルが見つかりません。.streamlit/secrets.toml を作成してAPIキーを設定してください。")
+    st.stop()
+except KeyError:
+    st.error("APIキーがSecretsファイルに設定されていません。'api_key = \"YOUR_KEY\"' の形式で記述してください。")
+    st.stop()
 
 # --- UI Elements ---
 col1, col2 = st.columns(2)
@@ -22,14 +30,11 @@ with col1:
 
 with col2:
     st.subheader("設定")
-    api_key = st.text_input("Gemini APIキーを入力してください:", type="password")
     model_name = st.selectbox("使用するモデルを選択してください:", ("gemini-2.5-flash", "gemini-2.5-pro"))
 
 # --- Main Logic ---
 if st.button("コンプライアンスをチェック"):
-    if not api_key:
-        st.error("Gemini APIキーを入力してください。")
-    elif not input_text:
+    if not input_text:
         st.error("チェックするテキストを入力してください。")
     else:
         try:
