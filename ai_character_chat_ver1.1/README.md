@@ -59,7 +59,7 @@ cd ai-character-chat
     `.env.sample` を `.env` にコピーし、取得した `GOOGLE_API_KEY` を設定してください。
     ```bash
     cp .env.sample .env
-    # .env ファイルを開き、GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY_HERE" を実際のAPIキーに置き換えます。
+    # .env ファイルを開き、GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY_HERE" をご自身のAPIキーに置き換えます。
     ```
 
 5.  バックエンドサーバーを起動します。
