@@ -115,3 +115,7 @@ cd ai-character-chat
 1.  バックエンドとフロントエンドの両方のサーバーが起動していることを確認します。
 2.  ウェブブラウザでフロントエンドのURL (`http://localhost:5173` など) にアクセスします。
 3.  チャット入力欄にメッセージを入力し、送信ボタンをクリックします。AIキャラクターが返答し、会話内容に応じた感情のイラストが表示されます。
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
