@@ -1,4 +1,5 @@
 # FAQ対応AIチャットボット
+<img width="801" height="623" alt="スクリーンショット 2025-08-25 12 44 49" src="https://github.com/user-attachments/assets/ede117bc-05d0-43aa-a7b0-9074a758b57c" />
 
 Streamlit、LangChain、Google Gemini APIを使用して構築された、設定分離型のFAQ対応AIチャットボットです。
 
