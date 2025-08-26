@@ -42,7 +42,8 @@ def load_faq_data(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             faq_data = json.load(f)
-        return [Document(page_content=item["answer"], metadata={"source": item["question"]}) for item in faq_data]
+        # "category" が存在しない場合も考慮し、デフォルト値を設定
+        return [Document(page_content=item["answer"], metadata={"source": item["question"], "category": item.get("category", "未分類")}) for item in faq_data]
     except FileNotFoundError:
         st.error(f"`{file_path}`ファイルが見つかりません。")
         return []
@@ -64,20 +65,12 @@ def setup_langchain(_docs, _config, api_key):
         llm_params = _config.get("llm_params", {})
         prompt_template = _config["prompt_template"]
 
-        # 1. Embeddingsモデルの初期化
         embeddings = GoogleGenerativeAIEmbeddings(model=embedding_model, google_api_key=api_key)
-
-        # 2. VectorStoreの作成 (FAISS)
         vector_store = FAISS.from_documents(_docs, embeddings)
         retriever = vector_store.as_retriever()
-
-        # 3. プロンプトの定義
         prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
-
-        # 4. LLMの初期化
         llm = ChatGoogleGenerativeAI(model=llm_model, google_api_key=api_key, **llm_params)
 
-        # 5. RetrievalQAチェーンの作成
         return RetrievalQA.from_chain_type(
             llm=llm,
             chain_type="stuff",
@@ -88,6 +81,29 @@ def setup_langchain(_docs, _config, api_key):
     except Exception as e:
         st.error(f"LangChainの初期化中にエラーが発生しました: {e}")
         return None
+
+# --- UIヘルパー関数 ---
+
+def handle_question(chain, question):
+    """質問を処理し、チャット履歴に追加する"""
+    if not chain:
+        st.warning("チャットボットが初期化されていません。設定を確認してください。")
+        return
+
+    # ユーザーの質問を履歴に追加
+    st.session_state.messages.append({"role": "user", "content": question})
+    
+    # AIの応答を生成
+    with st.spinner("AIが回答を生成中です..."):
+        try:
+            result = chain({"query": question})
+            response = result["result"]
+        except Exception as e:
+            response = f"エラーが発生しました: {e}"
+
+    # AIの応答を履歴に追加
+    st.session_state.messages.append({"role": "assistant", "content": response})
+
 
 # --- メインアプリケーション ---
 
@@ -107,41 +123,37 @@ def main():
         st.error("環境変数 `GEMINI_API_KEY` が設定されていません。")
         st.stop()
 
-    # LangChainのチェーンをセットアップ
     chain = setup_langchain(documents, config, api_key)
 
-    # --- チャット履歴の管理 ---
+    # --- チャット履歴の初期化 ---
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
+    # --- FAQ選択UI ---
+    st.subheader("よくある質問から選択する")
+    if documents:
+        categories = sorted(list(set(doc.metadata.get("category", "未分類") for doc in documents)))
+        selected_category = st.selectbox("カテゴリを選択してください:", categories)
+        
+        selected_docs = [doc for doc in documents if doc.metadata.get("category", "未分類") == selected_category]
+        
+        for doc in selected_docs:
+            question = doc.metadata["source"]
+            if st.button(question, key=question):
+                handle_question(chain, question)
+                st.rerun() # ボタンクリック後に画面を再描画してチャット履歴を更新
+
+    # --- チャット履歴の表示 ---
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # --- ユーザーの入力とAIの応答 ---
-    if prompt := st.chat_input("質問を入力してください"):
-        if not chain:
-            st.warning("チャットボットが初期化されていません。設定を確認してください。")
-            st.stop()
-
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        with st.chat_message("assistant"):
-            with st.spinner("AIが回答を生成中です..."):
-                try:
-                    result = chain({"query": prompt})
-                    response = result["result"]
-                except Exception as e:
-                    response = f"エラーが発生しました: {e}"
-            st.markdown(response)
-        
-        st.session_state.messages.append({"role": "assistant", "content": response})
+    # --- ユーザーの自由入力 ---
+    if prompt := st.chat_input("または、自由に質問を入力してください"):
+        handle_question(chain, prompt)
+        st.rerun() # 入力後に画面を再描画
 
 if __name__ == "__main__":
-    # asyncioイベントループの取得・設定
-    # Streamlitが非同期処理と共存するために必要
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:

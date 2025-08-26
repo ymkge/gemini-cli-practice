@@ -1,6 +1,9 @@
 # FAQ対応AIチャットボット
 <img width="801" height="623" alt="スクリーンショット 2025-08-25 12 44 49" src="https://github.com/user-attachments/assets/ede117bc-05d0-43aa-a7b0-9074a758b57c" />
 
+> [!NOTE]
+> スクリーンショットは旧バージョンのものです。現在のUIには、後述するカテゴリ別のFAQ選択機能が追加されています。
+
 Streamlit、LangChain、Google Gemini APIを使用して構築された、設定分離型のFAQ対応AIチャットボットです。
 
 ## 概要
@@ -10,6 +13,8 @@ Streamlit、LangChain、Google Gemini APIを使用して構築された、設定
 ## ✨ 主な機能
 
 - **インタラクティブなUI**: Streamlitによる直感的なチャットインターフェース。
+- **カテゴリ別FAQ選択**: よくある質問をカテゴリ別に表示し、クリックで簡単に質問・回答を確認できます。
+- **自然言語での質問**: カテゴリにない質問も、チャット入力欄から自由に質問できます。
 - **FAQベースの回答**: `faq.json`の情報を基に、関連性の高い回答を提示。
 - **柔軟なAI応答**: FAQに情報がない場合、LLMが自身の知識を用いて回答を試みます。
 - **外部設定ファイル**: モデル、パラメータ、プロンプトを外部ファイルで管理。
@@ -93,7 +98,7 @@ streamlit run app.py
 
 このチャットボットは、Pythonコードを編集せずに以下の点をカスタマイズできます。
 
-- **FAQの追加・編集**: `faq.json` を直接編集してください。
+- **FAQの追加・編集**: `faq.json` を直接編集してください。各FAQ項目は `category`、`question`、`answer` の3つのキーを持つJSONオブジェクトとして記述します。
 - **AIへの指示変更**: `prompt_template.txt` の内容を書き換えることで、AIの口調や役割を変更できます。
 - **モデルの変更**: `config.json` の `embedding_model` や `llm_model` の値を、利用したいモデル名に変更します。
 - **パラメータ調整**: `config.json` の `llm_params` にある `temperature` などの値を変更することで、AIの応答の多様性を調整できます。
