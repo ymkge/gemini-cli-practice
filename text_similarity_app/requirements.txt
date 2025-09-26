@@ -1,6 +1,0 @@
-streamlit
-scikit-learn
-janome
-jellyfish
-gspread
-google-auth-oauthlib
