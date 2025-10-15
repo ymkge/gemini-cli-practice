@@ -1,4 +1,6 @@
 # タイピングゲーム
+> [!NOTE]
+> このゲームは、git直下のリポジトリに移動させたので、こちらの機能は古い状態ですので、利用しないでください。
 <img width="1015" height="751" alt="スクリーンショット 2025-08-13 19 42 47" src="https://github.com/user-attachments/assets/0ed7c8b7-3d2c-4e40-a25a-656af2a4a02a" />
 
 ## 概要
